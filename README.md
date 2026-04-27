@@ -1,8 +1,7 @@
 # Instituto Pacifico — DSY1103 Desarrollo FullStack 1
 
 ## Descripción
-[Sistema de gestión académica que automatiza reglas clave como prerrequisitos, asistencia, notas y estado financiero de estudiantes,
-utilizando una arquitectura de microservicios para garantizar control, consistencia y eficiencia en los procesos educativos.]
+Sistema de gestión académica basado en arquitectura de microservicios para el Instituto Pacífico, orientado a digitalizar y automatizar procesos críticos como matrícula, evaluación, asistencia, aranceles y prácticas profesionales. La solución permite el registro en tiempo real de notas y asistencia con trazabilidad de cambios, integración entre servicios y aplicación de reglas de negocio, mejorando la eficiencia operativa y reduciendo errores en la gestión institucional.
 
 ## Equipo
 | Nombre | GitHub |
@@ -14,16 +13,16 @@ utilizando una arquitectura de microservicios para garantizar control, consisten
 ## Microservicios Implementados
 | # | Microservicio | Puerto | Descripción |
 |---|---------------|--------|-------------|
-| 1 | ms-estudiantes | 8081 | Gestión del ciclo de vida y datos personales del alumno |
-| 2 | ms-docentes | 8082 | Administración de perfiles académicos y especialidades |
-| 3 | ms-carreras | 8082 | Definición de mallas curriculares y sedes regionales |
-| 4 | ms-asignaturas | 8082 | Gestión de ramos, créditos y prerrequisitos |
-| 5 | ms-notas | 8082 | Registro de calificaciones y promedio para aprobación |
-| 6 | ms-asistencia | 8082 | Control diario de asistencia y cálculo de reprobación |
-| 7 | ms-aranceles | 8082 | Gestión de pagos, becas FES y convenios Banco Estado     |
-| 8 | ms-practicas | 8082 | Supervisión de pasantías y nexo con sector productivo |
-| 9 | ms-empresas | 8082 | Administración de convenios con las empresas |
-| 10 | ms-matriculas | 8082 | Control de procesos de inscripción anual y secciones |
+| 1 | ms-estudiantes | 8081 | Gestión de estudiantes (datos personales, estado académico) |
+| 2 | ms-docentes | 8082 | Gestión de docentes, especialidades y contratos |
+| 3 | ms-academico | 8083 | (Fusión) Carreras + asignaturas + mallas + prerrequisitos |
+| 4 | ms-matriculas | 8084 | Matrícula, inscripción a secciones |
+| 5 | ms-evaluacion | 8085 | (Fusión) Notas + evaluaciones + reglas de aprobación |
+| 6 | ms-asistencia | 8086 | Registro de asistencia y regla del 25%. |
+| 7 | ms-finanzas | 8087 | (Fusión) Aranceles + becas + convenios de pago |
+| 8 | ms-practicas | 8088 | Gestión de prácticas profesionales y validaciones |
+| 9 | ms-empresas | 8089 | Empresas con convenio y contactos |
+| 10 | ms-titulación | 8090 | Proceso de titulación y estado final del estudiante |
 
 ## Tecnologías Utilizadas
 - Java 17 / Spring Boot 3.x
