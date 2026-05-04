@@ -12,16 +12,19 @@ public class EvaluacionController {
     public EvaluacionController(EvaluacionService service) {
         this.service = service;
     }
+
     // Crear evaluación
     @PostMapping
     public Evaluacion crear(@RequestBody Evaluacion evaluacion) {
         return service.crear(evaluacion);
     }
+
     // Listar
     @GetMapping
     public List<Evaluacion> listar() {
         return service.listar();
     }
+
     // Obtener resultado final
     @GetMapping("/resultado/{matriculaId}")
     public ResultadoDTO resultado(@PathVariable Long matriculaId) {
