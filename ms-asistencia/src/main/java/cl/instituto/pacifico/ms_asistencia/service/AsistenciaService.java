@@ -31,7 +31,7 @@ public class AsistenciaService {
             throw new RuntimeException("Estudiante no existe");
         }
 
-        // 🔹 3. Copiar datos al modelo Asistencia
+        // 🔹 3. Copiar datos al     modelo Asistencia
         asistencia.setRut(e.getRut());
         asistencia.setEstudiante(e.getNombre());
 

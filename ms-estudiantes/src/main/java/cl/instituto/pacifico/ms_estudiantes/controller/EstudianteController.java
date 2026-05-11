@@ -24,6 +24,11 @@ public class EstudianteController {
             return estudianteRepository.findById(id).orElse(null);
         }
 
+        @GetMapping("/estudiante/{rut}")
+        public Estudiante  getByRut(@PathVariable String rut){
+            return estudianteRepository.findByRut(rut);
+        }
+
         // Crear
         @PostMapping
         public Estudiante guardarEstudiante(@RequestBody Estudiante estudiante) {
