@@ -9,7 +9,7 @@ public class Arancel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String estudianteRut;
     private String nombre;
     private Double monto;
     private String fecha;
@@ -30,4 +30,11 @@ public class Arancel {
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+
+    public String getEstudianteRut() {
+        return estudianteRut;
+    }
+    public void setEstudianteRut(String estudianteRut) {
+        this.estudianteRut = estudianteRut;
+    }
 }
