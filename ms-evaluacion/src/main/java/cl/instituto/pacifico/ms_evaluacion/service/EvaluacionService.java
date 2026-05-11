@@ -14,7 +14,11 @@ public class EvaluacionService {
     private Long contador = 1L;
 
     // conexión a ms-matriculas
-    private final WebClient client = WebClient.create("http://localhost:8084");
+    private final WebClient client = WebClient.builder()
+            .baseUrl("http://localhost:8084")
+            .defaultHeaders(headers ->
+                    headers.setBasicAuth("admin", "1234"))
+            .build();
 
     // Crear evaluación
     public Evaluacion crear(Evaluacion evaluacion) {

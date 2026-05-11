@@ -12,7 +12,11 @@ public class MatriculaService {
     private Long contador = 1L;
 
     // conexion a ms-estudiantes
-    private final WebClient client = WebClient.create("http://localhost:8081");
+    private final WebClient client = WebClient.builder()
+            .baseUrl("http://localhost:8081")
+            .defaultHeaders(headers ->
+                    headers.setBasicAuth("admin", "1234"))
+            .build();
 
     // Crear matrícula
     public Matricula crear(Matricula matricula) {

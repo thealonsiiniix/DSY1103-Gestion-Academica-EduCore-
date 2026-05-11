@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cl.instituto.pacifico</groupId>
-	<artifactId>ms-matriculas</artifactId>
+	<artifactId>ms-titulacion</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
