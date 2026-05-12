@@ -1,8 +1,6 @@
 package cl.instituto.pacifico.ms_estudiantes.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -10,11 +8,22 @@ public class Estudiante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "El rut es obligatorio")
     private String rut;
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+
+    @NotBlank(message = "El email es obligatorio")
     private String email;
+
+    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
+
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
     private LocalDate fechaNacimiento;
+
     private LocalDate fechaRegistro;
 
     public Estudiante() {

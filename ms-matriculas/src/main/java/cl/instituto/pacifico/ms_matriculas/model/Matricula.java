@@ -1,5 +1,4 @@
 package cl.instituto.pacifico.ms_matriculas.model;
-
 import java.time.LocalDate;
 
 public class Matricula {
