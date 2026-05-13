@@ -1,6 +1,8 @@
 package cl.instituto.pacifico.ms_matriculas.controller;
 import cl.instituto.pacifico.ms_matriculas.model.Matricula;
 import cl.instituto.pacifico.ms_matriculas.service.MatriculaService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -12,21 +14,84 @@ public class MatriculaController {
         this.service = service;
     }
 
-    // Crear matrícula
+    // Crear
     @PostMapping
-    public Matricula crear(@RequestBody Matricula matricula) {
-        return service.crear(matricula);
+    public ResponseEntity<?> crear(@RequestBody Matricula matricula) {
+        try {
+            if (matricula.getEstudianteId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El ID del estudiante es obligatorio");
+            }
+            if (matricula.getCarreraId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El ID de carrera es obligatorio");
+            }
+            Matricula nueva = service.crear(matricula);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
 
     // Listar
     @GetMapping
-    public List<Matricula> listar() {
-        return service.listar();
+    public ResponseEntity<?> listar() {
+        try {
+            List<Matricula> lista = service.listar();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al listar matrículas");
+        }
     }
 
-    // Obtener por ID
+    // Buscar por ID
     @GetMapping("/{id}")
-    public Matricula obtener(@PathVariable Long id) {
-        return service.obtener(id);
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        try {
+            Matricula matricula = service.obtener(id);
+            if (matricula == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Matrícula no encontrada");
+            }
+            return ResponseEntity.ok(matricula);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al buscar matrícula");
+        }
+    }
+
+    // Actualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Matricula matricula) {
+        try {
+            Matricula actualizada = service.actualizar(id, matricula);
+            if (actualizada == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Matrícula no encontrada");
+            }
+            return ResponseEntity.ok(actualizada);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar matrícula");
+        }
+    }
+
+    // Eliminar
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            Matricula matricula = service.obtener(id);
+            if (matricula == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Matrícula no encontrada");
+            }
+            service.eliminar(id);
+            return ResponseEntity.ok("Matrícula eliminada correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar matrícula");
+        }
     }
 }

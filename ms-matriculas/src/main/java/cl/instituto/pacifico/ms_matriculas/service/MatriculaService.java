@@ -40,14 +40,15 @@ public class MatriculaService {
 
         // Validar carrera
         CarreraDTO carrera = academicoClient.get()
-                .uri("/api/academico/" + matricula.getCarrera())
+                .uri("/api/academico/" + matricula.getCarreraId())
                 .retrieve()
                 .bodyToMono(CarreraDTO.class)
                 .block();
         if (carrera == null) {
             throw new RuntimeException("La carrera no existe");
         }
-        matricula.setId(contador++);
+        matricula.setId(contador);
+        contador++;
         lista.add(matricula);
         return matricula;
     }
@@ -76,7 +77,7 @@ public class MatriculaService {
         if (matricula == null) {
             return null;
         }
-        matricula.setCarrera(matriculaActualizada.getCarrera());
+        matricula.setCarreraId(matriculaActualizada.getCarreraId());
         matricula.setSeccion(matriculaActualizada.getSeccion());
         matricula.setFechaMatricula(matriculaActualizada.getFechaMatricula());
         matricula.setEstado(matriculaActualizada.getEstado());

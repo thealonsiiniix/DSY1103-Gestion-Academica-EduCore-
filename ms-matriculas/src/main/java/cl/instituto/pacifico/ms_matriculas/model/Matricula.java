@@ -2,20 +2,20 @@ package cl.instituto.pacifico.ms_matriculas.model;
 import java.time.LocalDate;
 
 public class Matricula {
-        private Long id;
-        private Long estudianteId;
-        private String carrera;
-        private String seccion;
-        private LocalDate fechaMatricula;
-        private String estado;
+    private Long id;
+    private Long estudianteId;
+    private Long carreraId;;
+    private String seccion;
+    private LocalDate fechaMatricula;
+    private String estado;
 
-        public Matricula() {
-        }
+    public Matricula() {
+    }
 
-    public Matricula(Long id, Long estudianteId, String carrera, String seccion, LocalDate fechaMatricula, String estado) {
+    public Matricula(Long id, Long estudianteId, Long carreraId, String seccion, LocalDate fechaMatricula, String estado) {
         this.id = id;
         this.estudianteId = estudianteId;
-        this.carrera = carrera;
+        this.carreraId = carreraId;
         this.seccion = seccion;
         this.fechaMatricula = fechaMatricula;
         this.estado = estado;
@@ -37,12 +37,12 @@ public class Matricula {
         this.estudianteId = estudianteId;
     }
 
-    public String getCarrera() {
-        return carrera;
+    public Long getCarreraId() {
+        return carreraId;
     }
 
-    public void setCarrera(String carrera) {
-        this.carrera = carrera;
+    public void setCarreraId(Long carreraId) {
+        this.carreraId = carreraId;
     }
 
     public String getSeccion() {
