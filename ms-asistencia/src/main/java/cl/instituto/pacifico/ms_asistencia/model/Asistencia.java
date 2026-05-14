@@ -1,23 +1,29 @@
 package cl.instituto.pacifico.ms_asistencia.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
 
+@Entity
 public class Asistencia {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;           // ID de la asistencia
     private Long estudianteId;
-    private String rut;
-    private String estudiante;
-
+    private String rutEstudiante;
+    private String nombreEstudiante;
 
     public Asistencia() {
-
     }
 
-    public Asistencia(Long id, Long estudianteId, String rut, String estudiante) {
+    public Asistencia(Long id, Long estudianteId, String rutEstudiante, String nombreEstudiante) {
         this.id = id;
         this.estudianteId = estudianteId;
-        this.rut = rut;
-        this.estudiante = estudiante;
+        this.rutEstudiante = rutEstudiante;
+        this.nombreEstudiante = nombreEstudiante;
     }
 
     public Long getId() {
@@ -36,19 +42,19 @@ public class Asistencia {
         this.estudianteId = estudianteId;
     }
 
-    public String getRut() {
-        return rut;
+    public String getRutEstudiante() {
+        return rutEstudiante;
     }
 
-    public void setRut(String rut) {
-        this.rut = rut;
+    public void setRutEstudiante(String rutEstudiante) {
+        this.rutEstudiante = rutEstudiante;
     }
 
-    public String getEstudiante() {
-        return estudiante;
+    public String getNombreEstudiante() {
+        return nombreEstudiante;
     }
 
-    public void setEstudiante(String estudiante) {
-        this.estudiante = estudiante;
+    public void setNombreEstudiante(String nombreEstudiante) {
+        this.nombreEstudiante = nombreEstudiante;
     }
 }

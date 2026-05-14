@@ -1,24 +1,33 @@
 package cl.instituto.pacifico.ms_practicas.service;
 
+import cl.instituto.pacifico.ms_practicas.controller.PracticaController;
 import cl.instituto.pacifico.ms_practicas.dto.ArancelDTO;
 import cl.instituto.pacifico.ms_practicas.dto.EmpresaDTO;
 import cl.instituto.pacifico.ms_practicas.dto.EstudianteDTO;
 import cl.instituto.pacifico.ms_practicas.model.Practica;
+import cl.instituto.pacifico.ms_practicas.repository.PracticaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PracticaService {
-    private final List<Practica> lista = new ArrayList<>();
-    private Long contador = 1L;
+    // Variable de el repositorio
+    public final PracticaRepository practicaRepository;
+
+    // inyecta el repositorio en el contructor
+    public PracticaService(PracticaRepository practicaRepository) {
+        this.practicaRepository = practicaRepository;
+    }
+
     private final WebClient client = WebClient.create("http://localhost:8081");
     private final WebClient clientEmpresa = WebClient.create("http://localhost:8089");
     private final WebClient clientFinanzas = WebClient.create("http://localhost:8087");
 
-    // Crear una Practica
+    // CREAR PRACTICA
     public Practica crear(Practica practica){
         // Peticion GET al MS 8081 estudiante
         EstudianteDTO e = client.get()
@@ -60,12 +69,11 @@ public class PracticaService {
 
         // Copia datos al modelo practica
         practica.setRutEstudiante(e.getRut());
-        for (Practica p : lista) {
-            if (p.getRutEstudiante().equals(practica.getRutEstudiante())) {
-                throw new RuntimeException("El estudiante ya tiene una práctica registrada");
-            }
+        if (practicaRepository.existsByRutEstudiante(practica.getRutEstudiante())) {
+            throw new RuntimeException("El estudiante ya tiene una práctica registrada");
         }
-       practica.setEstudianteId(e.getId());
+
+        practica.setEstudianteId(e.getId());
         practica.setNombreEstudiante(e.getNombre());
         practica.setEmailEstudiante(e.getEmail());
         practica.setTelefonoEstudiante(e.getTelefono());
@@ -77,27 +85,47 @@ public class PracticaService {
         practica.setConvenioVigenteEmpresa(emp.getConvenioVigente());
         practica.setEstadoArancel(arancel.getEstado());
 
-        // Guardar
-        practica.setId(contador++);
-        lista.add(practica);
-        return practica;
+        // GUARDAR
+        return practicaRepository.save(practica);
     }
 
     // METODO LISTA TOD0
     public List<Practica> listar() {
-        return lista;
+        return practicaRepository.findAll();
     }
 
     // BUSCAR POR ID
     public Practica buscarPorId(Long id) {
-        for (Practica p : lista) {
-            if (p.getId().equals(id)) {
-                return p;
-            }
-        }
-        return null;
+        Optional<Practica> practica = practicaRepository.findById(id);
+        return practica.orElse(null);
     }
 
+    // OBTENER PRACTICA POR RUT ESTUDIANTE
+    public List<Practica> obtenerPorRut(String rutEstudiante){
+        return practicaRepository.findByRutEstudiante(rutEstudiante);
+    }
 
+    // SI EXISTE X ID
+    public boolean existePorId(Long id){
+        return practicaRepository.existsById(id);
+    }
 
+    // ELIMINAR
+    public void eliminar(Long id) {
+        practicaRepository.deleteById(id);
+    }
+
+    // ACTUALIZAR LOS DATOS DE LA PRACTICA
+    public Optional<Practica>actualizarCompleta(Long id, Practica practicaActualizadol){
+        return practicaRepository.findById(id).map(practica -> {
+            // VALIDAR DUPLICADO
+            if (practicaRepository.existsByRutEstudianteAndIdNot(
+                    practicaActualizadol.getRutEstudiante(), id)) {
+                throw new RuntimeException("Ya existe una práctica con este rut");
+            }
+            practica.setRutEstudiante(practicaActualizadol.getRutEstudiante());
+            practica.setIdEmpresa(practicaActualizadol.getIdEmpresa());
+            return practicaRepository.save(practica);
+        });
+    }
 }

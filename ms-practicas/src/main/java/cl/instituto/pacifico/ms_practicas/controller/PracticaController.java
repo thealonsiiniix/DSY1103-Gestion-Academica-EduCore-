@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/practica")
+@RequestMapping("/api/v1/practica")
 public class PracticaController {
     // inyyectamos a feign para utilizarlo
     private final PracticaService service;
@@ -37,7 +37,7 @@ public class PracticaController {
         }
     }
 
-    // Listar
+    // LISTAR
     @GetMapping
     public ResponseEntity<?> listar() {
         try {
@@ -50,12 +50,11 @@ public class PracticaController {
     }
 
 
-    // 🔍 BUSCAR POR ID
+    //  BUSCAR POR ID
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Practica practica = service.buscarPorId(id);
-
             if (practica == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("practica no encontrada");
             }
@@ -64,6 +63,38 @@ public class PracticaController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+        }
+    }
+
+    @GetMapping("/estudiante/{rutEstudiante}")
+    public List<Practica> obtenerPorRut(@PathVariable String rutEstudiante){
+        return service.obtenerPorRut(rutEstudiante);
+    }
+
+    // ELIMINAR POR ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            if (!service.existePorId(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Practica no encontrada");
+            }
+            service.eliminar(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Practica eliminada");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+        }
+    }
+
+    // PUT - ACTUALIZAR PRACTICA
+    @PutMapping("/{id}")
+    // ACTUALIZA LA PRACTICA SI EXISTE Y SI NO MUESTRA MENSAJE DE ERROR
+    public ResponseEntity<?> actualizarCompleta(@PathVariable Long id, @RequestBody Practica practica) {
+        try {
+            return service.actualizarCompleta(id, practica).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
