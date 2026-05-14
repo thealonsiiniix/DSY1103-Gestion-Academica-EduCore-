@@ -1,28 +1,75 @@
+# Maven / Java
+
 target/
+
 *.class
+
 *.jar
+
 *.war
+
 *.ear
 
-.idea/
+
+
+# IntelliJ
+
+.idea
+
 *.iml
+
 *.iws
+
 *.ipr
+
+
+
+# VSCode
+
 .vscode/
+
+
+
+# Eclipse
+
 .settings/
+
 .project
+
 .classpath
 
-/data/
+
+
+# Databases / local data
+
+data/
+
+.data/
+
 *.mv.db
+
 *.trace.db
 
+
+
+# Logs
+
 *.log
+
 logs/
+
+
+
+# Local config
 
 application-local.properties
 
-.DS_Store
-Thumbs.db
-
 .env
+
+
+
+# OS files
+
+.DS_Store
+
+Thumbs.db
