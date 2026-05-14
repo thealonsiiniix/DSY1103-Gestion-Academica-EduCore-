@@ -1,17 +1,25 @@
 package cl.instituto.pacifico.ms_titulacion.model;
+import jakarta.persistence.*;
 
+@Entity
 public class Titulacion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long evaluacionId;
+
+    private Long matriculaId;
+
     private String fecha;
+
     private String estado;
 
     public Titulacion() {
     }
 
-    public Titulacion(Long id, Long evaluacionId, String fecha, String estado) {
+    public Titulacion(Long id, Long matriculaId, String fecha, String estado) {
         this.id = id;
-        this.evaluacionId = evaluacionId;
+        this.matriculaId = matriculaId;
         this.fecha = fecha;
         this.estado = estado;
     }
@@ -24,12 +32,12 @@ public class Titulacion {
         this.id = id;
     }
 
-    public Long getEvaluacionId() {
-        return evaluacionId;
+    public Long getMatriculaId() {
+        return matriculaId;
     }
 
-    public void setEvaluacionId(Long evaluacionId) {
-        this.evaluacionId = evaluacionId;
+    public void setMatriculaId(Long matriculaId) {
+        this.matriculaId = matriculaId;
     }
 
     public String getFecha() {

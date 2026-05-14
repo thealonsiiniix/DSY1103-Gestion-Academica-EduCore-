@@ -1,4 +1,4 @@
-package cl.instituto.pacifico.ms_estudiantes.config;
+package cl.instituto.pacifico.ms_evaluacion.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -16,9 +16,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // GET publico
-                        .requestMatchers("/api/v1/estudiantes/**").authenticated()
-                        // cualquier otra ruta requiere login
+                        .requestMatchers("/api/evaluaciones/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

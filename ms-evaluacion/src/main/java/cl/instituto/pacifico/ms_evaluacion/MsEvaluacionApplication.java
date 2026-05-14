@@ -1,5 +1,4 @@
 package cl.instituto.pacifico.ms_evaluacion;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

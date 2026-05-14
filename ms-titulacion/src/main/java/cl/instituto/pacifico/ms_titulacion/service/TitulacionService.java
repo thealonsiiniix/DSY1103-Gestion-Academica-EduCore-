@@ -1,49 +1,65 @@
 package cl.instituto.pacifico.ms_titulacion.service;
-import cl.instituto.pacifico.ms_titulacion.dto.EvaluacionDTO;
+import cl.instituto.pacifico.ms_titulacion.dto.ResultadoDTO;
 import cl.instituto.pacifico.ms_titulacion.model.Titulacion;
+import cl.instituto.pacifico.ms_titulacion.repository.TitulacionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TitulacionService {
-    private final List<Titulacion> lista = new ArrayList<>();
-    private Long contador = 1L;
+    private final TitulacionRepository repository;
+    public TitulacionService(TitulacionRepository repository) {
+        this.repository = repository;
+    }
 
-    // conexión a ms-evaluacion
-    private final WebClient client = WebClient.create("http://localhost:8085");
+    // conexión ms-evaluacion
+    private final WebClient evaluacionClient = WebClient.builder()
+            .baseUrl("http://localhost:8085")
+            .defaultHeaders(headers ->
+                    headers.setBasicAuth("admin", "1234"))
+            .build();
 
-    // crear titulación
+    // crear
     public Titulacion crear(Titulacion titulacion) {
-        EvaluacionDTO evaluacion = client.get()
-                .uri("/api/evaluaciones/" + titulacion.getEvaluacionId())
+        ResultadoDTO resultado = evaluacionClient.get()
+                .uri("/api/evaluaciones/resultado/" + titulacion.getMatriculaId())
                 .retrieve()
-                .bodyToMono(EvaluacionDTO.class)
+                .bodyToMono(ResultadoDTO.class)
                 .block();
-        if (evaluacion == null) {
-            throw new RuntimeException("Evaluación no existe");
+        if (resultado == null) {
+            throw new RuntimeException("No existe resultado final");
         }
-        if (!"APROBADO".equalsIgnoreCase(evaluacion.getEstado())) {
-            throw new RuntimeException("El estudiante no aprobó");
+        if (!resultado.getEstado().equalsIgnoreCase("APROBADO")) {
+            throw new RuntimeException("El estudiante no cumple requisitos para titularse");
         }
-        titulacion.setId(contador++);
         titulacion.setEstado("TITULADO");
-        lista.add(titulacion);
-        return titulacion;
+        return repository.save(titulacion);
     }
 
     // listar
     public List<Titulacion> listar() {
-        return lista;
+        return repository.findAll();
     }
 
-    // obtener
+    // buscar por id
     public Titulacion obtener(Long id) {
-        return lista.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return repository.findById(id).orElse(null);
+    }
+
+    // eliminar
+    public void eliminar(Long id) {
+        repository.deleteById(id);
+    }
+
+    // actualizar
+    public Titulacion actualizar(Long id, Titulacion nueva) {
+        Titulacion titulacion = obtener(id);
+        if (titulacion == null) {
+            return null;
+        }
+        titulacion.setFecha(nueva.getFecha());
+        return repository.save(titulacion);
     }
 }
 

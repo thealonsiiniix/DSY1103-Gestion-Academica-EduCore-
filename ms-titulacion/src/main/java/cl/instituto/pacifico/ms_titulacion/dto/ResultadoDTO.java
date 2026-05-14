@@ -1,14 +1,11 @@
-package cl.instituto.pacifico.ms_evaluacion.dto;
+package cl.instituto.pacifico.ms_titulacion.dto;
 
 public class ResultadoDTO {
-    public Long matriculaId;
-    public Double promedio;
-    public String estado;
+    private Long matriculaId;
+    private Double promedio;
+    private String estado;
 
-    public ResultadoDTO(Long matriculaId, Double promedio, String estado) {
-        this.matriculaId = matriculaId;
-        this.promedio = promedio;
-        this.estado = estado;
+    public ResultadoDTO() {
     }
 
     public Long getMatriculaId() {

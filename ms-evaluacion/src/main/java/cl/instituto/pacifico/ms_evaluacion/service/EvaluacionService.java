@@ -2,18 +2,19 @@ package cl.instituto.pacifico.ms_evaluacion.service;
 import cl.instituto.pacifico.ms_evaluacion.dto.MatriculaDTO;
 import cl.instituto.pacifico.ms_evaluacion.dto.ResultadoDTO;
 import cl.instituto.pacifico.ms_evaluacion.model.Evaluacion;
+import cl.instituto.pacifico.ms_evaluacion.repository.EvaluacionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EvaluacionService {
-    private final List<Evaluacion> lista = new ArrayList<>();
-    private Long contador = 1L;
+    private final EvaluacionRepository repository;
+    public EvaluacionService(EvaluacionRepository repository) {
+        this.repository = repository;
+    }
 
-    // conexión a ms-matriculas
+    // conexión ms-matriculas
     private final WebClient client = WebClient.builder()
             .baseUrl("http://localhost:8084")
             .defaultHeaders(headers ->
@@ -22,26 +23,48 @@ public class EvaluacionService {
 
     // Crear evaluación
     public Evaluacion crear(Evaluacion evaluacion) {
-        // Validar matrícula
-        MatriculaDTO matricula;
-
-        matricula = client.get()
+        MatriculaDTO matricula = client.get()
                 .uri("/api/matriculas/" + evaluacion.getMatriculaId())
                 .retrieve()
                 .bodyToMono(MatriculaDTO.class)
                 .block();
-        evaluacion.setId(contador++);
-        lista.add(evaluacion);
-        return evaluacion;
+        if (matricula == null) {
+            throw new RuntimeException("La matrícula no existe");
+        }
+        return repository.save(evaluacion);
     }
 
-    // Calcular promedio + estado (R3)
+    // Listar
+    public List<Evaluacion> listar() {
+        return repository.findAll();
+    }
+
+    // Buscar por ID
+    public Evaluacion buscarPorId(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    // Eliminar
+    public void eliminar(Long id) {
+        repository.deleteById(id);
+    }
+
+    // Actualizar
+    public Evaluacion actualizar(Long id, Evaluacion nueva) {
+        Evaluacion evaluacion = buscarPorId(id);
+        if (evaluacion == null) {
+            return null;
+        }
+        evaluacion.setMatriculaId(nueva.getMatriculaId());
+        evaluacion.setNota(nueva.getNota());
+        return repository.save(evaluacion);
+    }
+
+    // Resultado final
     public ResultadoDTO calcularResultado(Long matriculaId) {
-        List<Evaluacion> notas = lista.stream()
-                .filter(e -> e.getMatriculaId().equals(matriculaId))
-                .collect(Collectors.toList());
+        List<Evaluacion> notas = repository.findByMatriculaId(matriculaId);
         if (notas.isEmpty()) {
-            throw new RuntimeException("No hay evaluaciones");
+            throw new RuntimeException("No existen evaluaciones");
         }
         double promedio = notas.stream()
                 .mapToDouble(Evaluacion::getNota)
@@ -56,9 +79,5 @@ public class EvaluacionService {
             estado = "REPROBADO";
         }
         return new ResultadoDTO(matriculaId, promedio, estado);
-    }
-
-    public List<Evaluacion> listar() {
-        return lista;
     }
 }
