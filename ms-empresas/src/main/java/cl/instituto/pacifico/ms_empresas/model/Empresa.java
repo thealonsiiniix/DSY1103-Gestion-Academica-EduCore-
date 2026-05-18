@@ -3,17 +3,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+    @NotBlank(message = "El RUT es obligatorio")
     private String rut;
+    @NotBlank(message = "La direccion es obligatoria")
     private String direccion;
+    @NotBlank(message = "El telefono es obligatorio")
     private String telefono;
+    @NotBlank(message = "El email es obligatorio")
     private String email;
+    @NotNull(message = "El convenio es obligatorio")
     private Boolean convenioVigente;
 
     // Constructor vacío

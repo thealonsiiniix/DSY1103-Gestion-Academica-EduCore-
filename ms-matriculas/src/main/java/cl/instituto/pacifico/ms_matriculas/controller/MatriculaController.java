@@ -14,7 +14,7 @@ public class MatriculaController {
         this.service = service;
     }
 
-    // Crear
+    // CREAR
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Matricula matricula) {
         try {
@@ -26,15 +26,20 @@ public class MatriculaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("El ID de carrera es obligatorio");
             }
+            if (matricula.getSeccion() == null || matricula.getSeccion().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("La sección es obligatoria");
+            }
             Matricula nueva = service.crear(matricula);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(nueva);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
     }
 
-    // Listar
+    // LISTAR
     @GetMapping
     public ResponseEntity<?> listar() {
         try {
@@ -46,7 +51,7 @@ public class MatriculaController {
         }
     }
 
-    // Buscar por ID
+    // BUSCAR POR ID
     @GetMapping("/{id}")
     public ResponseEntity<?> obtener(@PathVariable Long id) {
         try {
@@ -62,10 +67,18 @@ public class MatriculaController {
         }
     }
 
-    // Actualizar
+    // ACTUALIZAR
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Matricula matricula) {
         try {
+            if (matricula.getCarreraId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("El ID de carrera es obligatorio");
+            }
+            if (matricula.getSeccion() == null || matricula.getSeccion().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("La sección es obligatoria");
+            }
             Matricula actualizada = service.actualizar(id, matricula);
             if (actualizada == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -74,11 +87,11 @@ public class MatriculaController {
             return ResponseEntity.ok(actualizada);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar matrícula");
+                    .body(e.getMessage());
         }
     }
 
-    // Eliminar
+    // ELIMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {

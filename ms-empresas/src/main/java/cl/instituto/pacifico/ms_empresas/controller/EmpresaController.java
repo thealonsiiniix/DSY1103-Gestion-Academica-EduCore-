@@ -1,6 +1,7 @@
 package cl.instituto.pacifico.ms_empresas.controller;
 import cl.instituto.pacifico.ms_empresas.model.Empresa;
 import cl.instituto.pacifico.ms_empresas.service.EmpresaService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class EmpresaController {
 
     // CREAR
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Empresa empresa) {
+    public ResponseEntity<?> crear(@Valid @RequestBody Empresa empresa) {
         try {
             if (empresa.getNombre() == null || empresa.getNombre().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -29,6 +30,10 @@ public class EmpresaController {
             if (empresa.getEmail() == null || empresa.getEmail().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("email obligatorio");
+            }
+            if (empresa.getConvenioVigente() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("convenio obligatorio");
             }
             Empresa nuevaEmpresa = service.crear(empresa);
             return ResponseEntity.status(HttpStatus.CREATED)

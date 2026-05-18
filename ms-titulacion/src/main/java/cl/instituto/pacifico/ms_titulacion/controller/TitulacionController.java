@@ -23,6 +23,11 @@ public class TitulacionController {
                         .status(HttpStatus.BAD_REQUEST)
                         .body("matriculaId obligatorio");
             }
+            if (titulacion.getFecha() == null) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("fecha obligatoria");
+            }
             Titulacion nueva = service.crear(titulacion);
             return ResponseEntity
                     .status(HttpStatus.CREATED)

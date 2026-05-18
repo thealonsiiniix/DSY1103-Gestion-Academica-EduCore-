@@ -2,15 +2,21 @@ package cl.instituto.pacifico.ms_matriculas.service;
 import cl.instituto.pacifico.ms_matriculas.dto.CarreraDTO;
 import cl.instituto.pacifico.ms_matriculas.dto.EstudianteDTO;
 import cl.instituto.pacifico.ms_matriculas.model.Matricula;
+import cl.instituto.pacifico.ms_matriculas.repository.MatriculaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class MatriculaService {
-    private final List<Matricula> lista = new ArrayList<>();
-    private Long contador = 1L;
+    private static final Logger log = LoggerFactory.getLogger(MatriculaService.class);
+    private final MatriculaRepository repository;
+    public MatriculaService(MatriculaRepository repository) {
+        this.repository = repository;
+    }
 
     // MS estudiantes
     private final WebClient estudianteClient = WebClient.builder()
@@ -26,61 +32,79 @@ public class MatriculaService {
                     headers.setBasicAuth("admin", "1234"))
             .build();
 
-    // Crear matrícula
+    // CREAR
     public Matricula crear(Matricula matricula) {
-        // Validar estudiante
+        log.info("Creando matrícula");
+        // validar estudiante
+        log.info("Consultando ms-estudiantes");
         EstudianteDTO estudiante = estudianteClient.get()
                 .uri("/api/v1/estudiantes/" + matricula.getEstudianteId())
                 .retrieve()
                 .bodyToMono(EstudianteDTO.class)
                 .block();
         if (estudiante == null) {
+            log.error("El estudiante no existe");
             throw new RuntimeException("El estudiante no existe");
         }
-
-        // Validar carrera
+        // validar carrera
+        log.info("Consultando ms-academico");
         CarreraDTO carrera = academicoClient.get()
                 .uri("/api/academico/" + matricula.getCarreraId())
                 .retrieve()
                 .bodyToMono(CarreraDTO.class)
                 .block();
         if (carrera == null) {
+            log.error("La carrera no existe");
             throw new RuntimeException("La carrera no existe");
         }
-        matricula.setId(contador);
-        contador++;
-        lista.add(matricula);
-        return matricula;
+        matricula.setFechaMatricula(LocalDate.now());
+        if (matricula.getEstado() == null) {
+            matricula.setEstado("ACTIVA");
+        }
+        log.info("Matrícula creada correctamente");
+        return repository.save(matricula);
     }
 
-    // Listar
+    // LISTAR
     public List<Matricula> listar() {
-        return lista;
+        log.info("Listando matrículas");
+        return repository.findAll();
     }
 
-    // Buscar por ID
+    // BUSCAR POR ID
     public Matricula obtener(Long id) {
-        return lista.stream()
-                .filter(m -> m.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        log.info("Buscando matrícula con ID: {}", id);
+        return repository.findById(id).orElse(null);
     }
 
-    // Eliminar
+    // ELIMINAR
     public void eliminar(Long id) {
-        lista.removeIf(m -> m.getId().equals(id));
+        log.info("Eliminando matrícula con ID: {}", id);
+        repository.deleteById(id);
+        log.info("Matrícula eliminada correctamente");
     }
 
-    // Actualizar
+    // ACTUALIZAR
     public Matricula actualizar(Long id, Matricula matriculaActualizada) {
-        Matricula matricula = obtener(id);
+        log.info("Actualizando matrícula con ID: {}", id);
+        Matricula matricula = repository.findById(id).orElse(null);
         if (matricula == null) {
+            log.error("Matrícula no encontrada");
             return null;
+        }
+        // validar carrera
+        CarreraDTO carrera = academicoClient.get()
+                .uri("/api/academico/" + matriculaActualizada.getCarreraId())
+                .retrieve()
+                .bodyToMono(CarreraDTO.class)
+                .block();
+        if (carrera == null) {
+            throw new RuntimeException("La carrera no existe");
         }
         matricula.setCarreraId(matriculaActualizada.getCarreraId());
         matricula.setSeccion(matriculaActualizada.getSeccion());
-        matricula.setFechaMatricula(matriculaActualizada.getFechaMatricula());
         matricula.setEstado(matriculaActualizada.getEstado());
-        return matricula;
+        log.info("Matrícula actualizada correctamente");
+        return repository.save(matricula);
     }
 }

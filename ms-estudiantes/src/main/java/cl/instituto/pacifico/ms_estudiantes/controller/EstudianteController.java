@@ -1,6 +1,7 @@
 package cl.instituto.pacifico.ms_estudiantes.controller;
 import cl.instituto.pacifico.ms_estudiantes.model.Estudiante;
 import cl.instituto.pacifico.ms_estudiantes.service.EstudianteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class EstudianteController {
 
     // CREAR
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Estudiante estudiante) {
+    public ResponseEntity<?> guardar(@Valid @RequestBody Estudiante estudiante) {
         try {
             if (estudiante.getRut() == null || estudiante.getRut().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -1,10 +1,23 @@
 package cl.instituto.pacifico.ms_matriculas.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
+@Entity
 public class Matricula {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull(message = "El ID del estudiante es obligatorio")
     private Long estudianteId;
-    private Long carreraId;;
+    @NotNull(message = "El ID de carrera es obligatorio")
+    private Long carreraId;
+    @NotBlank(message = "La sección es obligatoria")
     private String seccion;
     private LocalDate fechaMatricula;
     private String estado;

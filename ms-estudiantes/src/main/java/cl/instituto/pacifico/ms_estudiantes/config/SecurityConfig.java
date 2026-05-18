@@ -16,9 +16,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // GET publico
                         .requestMatchers("/api/v1/estudiantes/**").authenticated()
-                        // cualquier otra ruta requiere login
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

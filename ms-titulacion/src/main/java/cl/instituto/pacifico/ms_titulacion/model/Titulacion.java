@@ -1,23 +1,26 @@
 package cl.instituto.pacifico.ms_titulacion.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 
 @Entity
 public class Titulacion {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotNull(message = "matriculaId obligatorio")
     private Long matriculaId;
-
-    private String fecha;
-
+    @NotNull(message = "fecha obligatoria")
+    private LocalDate fecha;
+    @NotBlank(message = "estado obligatorio")
     private String estado;
 
     public Titulacion() {
     }
 
-    public Titulacion(Long id, Long matriculaId, String fecha, String estado) {
+    public Titulacion(Long id, Long matriculaId, LocalDate fecha, String estado) {
         this.id = id;
         this.matriculaId = matriculaId;
         this.fecha = fecha;
@@ -40,11 +43,11 @@ public class Titulacion {
         this.matriculaId = matriculaId;
     }
 
-    public String getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(String fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
