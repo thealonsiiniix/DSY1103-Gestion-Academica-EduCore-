@@ -49,7 +49,7 @@ public class MatriculaService {
         // validar carrera
         log.info("Consultando ms-academico");
         CarreraDTO carrera = academicoClient.get()
-                .uri("/api/academico/" + matricula.getCarreraId())
+                .uri("/api/v1/academico/" + matricula.getCarreraId())
                 .retrieve()
                 .bodyToMono(CarreraDTO.class)
                 .block();
@@ -61,40 +61,40 @@ public class MatriculaService {
         if (matricula.getEstado() == null) {
             matricula.setEstado("ACTIVA");
         }
-        log.info("Matrícula creada correctamente");
+        log.info("Matricula creada correctamente");
         return repository.save(matricula);
     }
 
     // LISTAR
     public List<Matricula> listar() {
-        log.info("Listando matrículas");
+        log.info("Listando matriculas");
         return repository.findAll();
     }
 
     // BUSCAR POR ID
     public Matricula obtener(Long id) {
-        log.info("Buscando matrícula con ID: {}", id);
+        log.info("Buscando matricula con ID: {}", id);
         return repository.findById(id).orElse(null);
     }
 
     // ELIMINAR
     public void eliminar(Long id) {
-        log.info("Eliminando matrícula con ID: {}", id);
+        log.info("Eliminando matricula con ID: {}", id);
         repository.deleteById(id);
-        log.info("Matrícula eliminada correctamente");
+        log.info("Matricula eliminada correctamente");
     }
 
     // ACTUALIZAR
     public Matricula actualizar(Long id, Matricula matriculaActualizada) {
-        log.info("Actualizando matrícula con ID: {}", id);
+        log.info("Actualizando matricula con ID: {}", id);
         Matricula matricula = repository.findById(id).orElse(null);
         if (matricula == null) {
-            log.error("Matrícula no encontrada");
+            log.error("Matricula no encontrada");
             return null;
         }
         // validar carrera
         CarreraDTO carrera = academicoClient.get()
-                .uri("/api/academico/" + matriculaActualizada.getCarreraId())
+                .uri("/api/v1/academico/" + matriculaActualizada.getCarreraId())
                 .retrieve()
                 .bodyToMono(CarreraDTO.class)
                 .block();
@@ -104,7 +104,7 @@ public class MatriculaService {
         matricula.setCarreraId(matriculaActualizada.getCarreraId());
         matricula.setSeccion(matriculaActualizada.getSeccion());
         matricula.setEstado(matriculaActualizada.getEstado());
-        log.info("Matrícula actualizada correctamente");
+        log.info("Matricula actualizada correctamente");
         return repository.save(matricula);
     }
 }

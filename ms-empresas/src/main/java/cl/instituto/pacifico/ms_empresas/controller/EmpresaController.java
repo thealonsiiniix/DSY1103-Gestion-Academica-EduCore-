@@ -17,7 +17,7 @@ public class EmpresaController {
 
     // CREAR
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody Empresa empresa) {
+    public ResponseEntity<?> crear(@RequestBody Empresa empresa) {
         try {
             if (empresa.getNombre() == null || empresa.getNombre().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)

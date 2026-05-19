@@ -1,0 +1,20 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Bases de datos H2
+data/
+*.mv.db
+*.trace.db
+
+# Maven
+target/
+
+# Logs
+*.log
+
+# VSCode
+.vscode/
+
+# Flyway
+flyway-schema-history

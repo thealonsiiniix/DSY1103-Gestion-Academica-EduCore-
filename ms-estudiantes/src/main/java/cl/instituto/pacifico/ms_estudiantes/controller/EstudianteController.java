@@ -61,7 +61,7 @@ public class EstudianteController {
 
     // CREAR
     @PostMapping
-    public ResponseEntity<?> guardar(@Valid @RequestBody Estudiante estudiante) {
+    public ResponseEntity<?> guardar(@RequestBody Estudiante estudiante) {
         try {
             if (estudiante.getRut() == null || estudiante.getRut().isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
