@@ -72,7 +72,7 @@ public class AsistenciaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
-            if (!service.existePorId(id)) {
+             if (!service.existePorId(id)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asistencia no encontrada");
             }
             service.eliminar(id);

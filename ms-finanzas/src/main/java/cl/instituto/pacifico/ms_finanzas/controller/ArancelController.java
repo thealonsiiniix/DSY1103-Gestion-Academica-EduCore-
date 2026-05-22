@@ -26,6 +26,11 @@ public class ArancelController {
         return repository.findById(id).orElse(null);
     }
 
+    @GetMapping("/rut/{rut}")
+    public Arancel getByRut(@PathVariable String rut){
+        return repository.findByEstudianteRut(rut);
+    }
+
     @PostMapping
     public Arancel guardar(@RequestBody Arancel arancel) {
         return repository.save(arancel);

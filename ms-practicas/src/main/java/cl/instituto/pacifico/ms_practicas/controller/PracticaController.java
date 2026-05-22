@@ -18,6 +18,7 @@ public class PracticaController {
         this.service = service;
     }
 
+    // CREAR PRACTICA - POST
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Practica practica) {
         try {
@@ -32,12 +33,14 @@ public class PracticaController {
             Practica nuevaPractia = service.crear(practica);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPractia);
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+
+
     }
 
-    // LISTAR
+    // LISTAR - GET
     @GetMapping
     public ResponseEntity<?> listar() {
         try {
@@ -50,7 +53,7 @@ public class PracticaController {
     }
 
 
-    //  BUSCAR POR ID
+    //  BUSCAR POR ID -GET
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -66,12 +69,13 @@ public class PracticaController {
         }
     }
 
+    //  BUSCAR POR ESTUDIANTE - GET
     @GetMapping("/estudiante/{rutEstudiante}")
     public List<Practica> obtenerPorRut(@PathVariable String rutEstudiante){
         return service.obtenerPorRut(rutEstudiante);
     }
 
-    // ELIMINAR POR ID
+    // ELIMINAR POR ID - DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -93,7 +97,7 @@ public class PracticaController {
         try {
             return service.actualizarCompleta(id, practica).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -15,15 +15,17 @@ public class Asistencia {
     private Long estudianteId;
     private String rutEstudiante;
     private String nombreEstudiante;
+    private LocalDate fechaAsistencia;
 
     public Asistencia() {
     }
 
-    public Asistencia(Long id, Long estudianteId, String rutEstudiante, String nombreEstudiante) {
+    public Asistencia(Long id, Long estudianteId, String rutEstudiante, String nombreEstudiante, LocalDate fechaAsistencia) {
         this.id = id;
         this.estudianteId = estudianteId;
         this.rutEstudiante = rutEstudiante;
         this.nombreEstudiante = nombreEstudiante;
+        this.fechaAsistencia = fechaAsistencia;
     }
 
     public Long getId() {
@@ -56,5 +58,13 @@ public class Asistencia {
 
     public void setNombreEstudiante(String nombreEstudiante) {
         this.nombreEstudiante = nombreEstudiante;
+    }
+
+    public LocalDate getFechaAsistencia() {
+        return fechaAsistencia;
+    }
+
+    public void setFechaAsistencia(LocalDate fechaAsistencia) {
+        this.fechaAsistencia = fechaAsistencia;
     }
 }
