@@ -11,15 +11,40 @@ public class ConvenioPago {
     private Long id;
 
     private Integer cuotas;
+
+    @Column(name = "monto_total")
     private Double montoTotal;
 
-    public ConvenioPago() {}
+    public ConvenioPago() {
+    }
 
-    public Long getId() { return id; }
+    public ConvenioPago(Long id, Integer cuotas, Double montoTotal) {
+        this.id = id;
+        this.cuotas = cuotas;
+        this.montoTotal = montoTotal;
+    }
 
-    public Integer getCuotas() { return cuotas; }
-    public void setCuotas(Integer cuotas) { this.cuotas = cuotas; }
+    public Long getId() {
+        return id;
+    }
 
-    public Double getMontoTotal() { return montoTotal; }
-    public void setMontoTotal(Double montoTotal) { this.montoTotal = montoTotal; }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getCuotas() {
+        return cuotas;
+    }
+
+    public void setCuotas(Integer cuotas) {
+        this.cuotas = cuotas;
+    }
+
+    public Double getMontoTotal() {
+        return montoTotal;
+    }
+
+    public void setMontoTotal(Double montoTotal) {
+        this.montoTotal = montoTotal;
+    }
 }
