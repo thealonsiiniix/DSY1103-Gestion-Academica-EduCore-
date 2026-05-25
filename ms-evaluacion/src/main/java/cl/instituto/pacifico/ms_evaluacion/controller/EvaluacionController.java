@@ -77,8 +77,7 @@ public class EvaluacionController {
 
         } catch (Exception e) {
             log.error("Error al crear evaluación");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear evaluación");
         }
     }
 
@@ -96,26 +95,24 @@ public class EvaluacionController {
             return ResponseEntity.ok(actualizada);
         } catch (Exception e) {
             log.error("Error al actualizar evaluación");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar evaluación");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar evaluación");
         }
     }
 
     // ELIMINAR
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(
-            @PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
-
-            log.info("Eliminando evaluación con ID {}", id);
+            Evaluacion evaluacion = service.buscarPorId(id);
+            if (evaluacion == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("evaluacion no encontrada");
+            }
             service.eliminar(id);
-            return ResponseEntity.ok(
-                    "Evaluación eliminada correctamente");
-
+            return ResponseEntity.ok("evaluacion eliminada correctamente");
         } catch (Exception e) {
-            log.error("Error al eliminar evaluación");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar evaluación");
+                    .body("Error al eliminar evaluacion");
         }
     }
 

@@ -1,9 +1,9 @@
 CREATE TABLE docentes (
                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          rut VARCHAR(20) NOT NULL,
+                          rut VARCHAR(20) UNIQUE,
                           nombre VARCHAR(100) NOT NULL,
                           apellido VARCHAR(100) NOT NULL,
-                          correo VARCHAR(150)
+                          correo VARCHAR(150) UNIQUE
 );
 
 INSERT INTO docentes (rut, nombre, apellido, correo) VALUES

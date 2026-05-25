@@ -39,8 +39,7 @@ public class EmpresaController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(nuevaEmpresa);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear empresa");
         }
     }
 

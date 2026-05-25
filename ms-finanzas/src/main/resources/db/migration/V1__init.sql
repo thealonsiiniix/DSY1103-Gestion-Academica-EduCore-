@@ -1,6 +1,6 @@
 CREATE TABLE aranceles (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                           estudiante_rut VARCHAR(100),
+                           estudiante_rut VARCHAR(100) UNIQUE,
                            nombre VARCHAR(100),
                            monto DOUBLE,
                            fecha VARCHAR(50),

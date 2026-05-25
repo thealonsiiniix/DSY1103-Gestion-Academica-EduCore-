@@ -30,7 +30,7 @@ public class AsistenciaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsistencia);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear asistencias");
         }
     }
 
@@ -87,10 +87,15 @@ public class AsistenciaController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarCompleta(@PathVariable Long id, @RequestBody Asistencia asistencia) {
         try {
-            return service.actualizarCompleta(id, asistencia).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+            if (!service.existePorId(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asistencia no encontrada con id: " + id);
+            }
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Asistencia actualizada = service.actualizarCompleta(id, asistencia).get();
+            return ResponseEntity.ok(actualizada);
+
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar asistencia");
         }
     }
 }

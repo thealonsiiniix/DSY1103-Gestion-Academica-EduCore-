@@ -44,7 +44,6 @@ public class EvaluacionService {
                 .block();
 
 
-
         if (matricula == null) {
 
             log.error("La matrícula no existe");
@@ -81,10 +80,23 @@ public class EvaluacionService {
 
     // Actualizar
     public Evaluacion actualizar(Long id, Evaluacion nueva) {
-
         log.info("Actualizando evaluación con ID {}", id);
 
+        MatriculaDTO matricula = client.get()
+                .uri("/api/v1/matriculas/" + nueva.getMatriculaId())
+                .retrieve()
+                .bodyToMono(MatriculaDTO.class)
+                .block();
+
         Evaluacion evaluacion = buscarPorId(id);
+
+
+        if (matricula == null) {
+
+            log.error("La matrícula no existe");
+
+            throw new RuntimeException("La matrícula no existe");
+        }
 
         if (evaluacion == null) {
 

@@ -34,7 +34,7 @@ public class PracticaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPractia);
 
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear practica");
         }
 
 
@@ -71,8 +71,19 @@ public class PracticaController {
 
     //  BUSCAR POR ESTUDIANTE - GET
     @GetMapping("/estudiante/{rutEstudiante}")
-    public List<Practica> obtenerPorRut(@PathVariable String rutEstudiante){
-        return service.obtenerPorRut(rutEstudiante);
+    public ResponseEntity<?> obtenerPorRut(@PathVariable String rutEstudiante){
+        try {
+            List<Practica> practicas = service.obtenerPorRut(rutEstudiante);
+
+            if (practicas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existen prácticas para este estudiante");
+            }
+
+            return ResponseEntity.ok(practicas);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
+        }
     }
 
     // ELIMINAR POR ID - DELETE
@@ -98,7 +109,7 @@ public class PracticaController {
             return service.actualizarCompleta(id, practica).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
         }catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar practica");
         }
     }
 }

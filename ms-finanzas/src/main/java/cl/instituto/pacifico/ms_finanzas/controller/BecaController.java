@@ -70,6 +70,22 @@ public class BecaController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Beca beca) {
+        try {
+            log.info("Actualizando beca con ID {}", id);
+            Beca becaActualizada = service.actualizar(id, beca);
+            if (becaActualizada == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Beca no encontrada");
+            }
+
+            return ResponseEntity.ok(becaActualizada);
+        } catch (Exception e) {
+            log.error("Error al actualizar beca");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar beca");
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {

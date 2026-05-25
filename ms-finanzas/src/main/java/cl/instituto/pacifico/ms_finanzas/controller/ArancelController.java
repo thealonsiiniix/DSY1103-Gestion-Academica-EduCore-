@@ -2,6 +2,7 @@
 package cl.instituto.pacifico.ms_finanzas.controller;
 
 import cl.instituto.pacifico.ms_finanzas.model.Arancel;
+import cl.instituto.pacifico.ms_finanzas.repository.ArancelRepository;
 import cl.instituto.pacifico.ms_finanzas.service.ArancelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +66,41 @@ public class ArancelController {
                     .body(nuevoArancel);
         } catch (Exception e) {
             log.error("Error al crear arancel");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear arancel");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear arancel");
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Arancel arancel) {
+        try {
+            log.info("Actualizando arancel con ID {}", id);
+            Arancel arancelActualizado = service.actualizar(id, arancel);
+            if (arancelActualizado == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Arancel no encontrado");
+            }
+
+            return ResponseEntity.ok(arancelActualizado);
+        } catch (Exception e) {
+            log.error("Error al actualizar arancel");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar arancel");
+        }
+    }
+
+    @GetMapping("/rut/{rut}")
+    public ResponseEntity<?> buscarPorRut(@PathVariable String rut) {
+        try {
+            Arancel arancel = service.buscarPorRut(rut);
+            if (arancel == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Estudiante no encontrado");
+            }
+            return ResponseEntity.ok(arancel);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al buscar estudiante");
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {

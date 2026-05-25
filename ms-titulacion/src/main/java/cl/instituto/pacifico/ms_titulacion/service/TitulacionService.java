@@ -28,7 +28,7 @@ public class TitulacionService {
         log.info("Consultando ms-evaluacion para matrícula ID: {}",
                 titulacion.getMatriculaId());
         ResultadoDTO resultado = evaluacionClient.get()
-                .uri("/api/evaluaciones/resultado/" + titulacion.getMatriculaId())
+                .uri("/api/v1/evaluaciones/resultado/" + titulacion.getMatriculaId())
                 .retrieve()
                 .bodyToMono(ResultadoDTO.class)
                 .block();

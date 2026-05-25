@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/titulaciones")
+@RequestMapping("/api/v1/titulaciones")
 public class TitulacionController {
     private final TitulacionService service;
     public TitulacionController(TitulacionService service) {
@@ -33,9 +33,7 @@ public class TitulacionController {
                     .status(HttpStatus.CREATED)
                     .body(nueva);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear titulacion");
         }
     }
 

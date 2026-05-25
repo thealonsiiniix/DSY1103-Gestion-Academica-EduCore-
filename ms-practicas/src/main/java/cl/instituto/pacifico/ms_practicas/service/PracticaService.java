@@ -77,7 +77,7 @@ public class PracticaService {
         // Obtiene arancel de MS finanzas
         log.info("Consultando ms-finanzas");
         ArancelDTO arancel = clientFinanzas.get()
-                .uri("/aranceles/rut/" +  practica.getRutEstudiante())
+                .uri("/api/v1/aranceles/rut/" +  practica.getRutEstudiante())
                 .retrieve()
                 .bodyToMono(ArancelDTO.class)
                 .block();

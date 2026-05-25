@@ -60,6 +60,11 @@ public class ArancelService {
         return repository.save(arancel);
     }
 
+    // BUSCAR POR RUT
+    public Arancel getByRut(String rut) {
+        log.info("Buscando estudiante con RUT: {}", rut);
+        return repository.findByEstudianteRut(rut);
+    }
 
     public Arancel eliminar(Long id) {
         log.info("Eliminando arancel con ID {}", id);

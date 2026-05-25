@@ -34,8 +34,7 @@ public class MatriculaController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(nueva);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear matricula");
         }
     }
 
@@ -86,8 +85,7 @@ public class MatriculaController {
             }
             return ResponseEntity.ok(actualizada);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar matricula");
         }
     }
 
