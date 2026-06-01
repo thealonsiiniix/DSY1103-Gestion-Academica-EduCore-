@@ -1,6 +1,10 @@
 package cl.instituto.pacifico.ms_estudiantes.controller;
 import cl.instituto.pacifico.ms_estudiantes.model.Estudiante;
 import cl.instituto.pacifico.ms_estudiantes.service.EstudianteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,123 +13,78 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/estudiantes")
+
+@Tag(
+        name = "Estudiantes",
+        description = "Operaciones relacionadas con la gestión de estudiantes"
+)
 public class EstudianteController {
     private final EstudianteService service;
     public EstudianteController(EstudianteService service) {
         this.service = service;
     }
 
-    // LISTAR
+    @Operation(
+            summary = "Listar estudiantes",
+            description = "Obtiene todos los estudiantes registrados"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            List<Estudiante> estudiantes = service.listar();
-            return ResponseEntity.ok(estudiantes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar estudiantes");
-        }
+    public ResponseEntity<List<Estudiante>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
-    // BUSCAR POR ID
+    @Operation(
+            summary = "Buscar estudiante por ID",
+            description = "Obtiene un estudiante según su identificador"
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Estudiante estudiante = service.buscarPorId(id);
-            if (estudiante == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Estudiante no encontrado");
-            }
-            return ResponseEntity.ok(estudiante);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar estudiante");
-        }
+    public ResponseEntity<Estudiante> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
-    // BUSCAR POR RUT
+    @Operation(
+            summary = "Buscar estudiante por RUT",
+            description = "Obtiene un estudiante según su RUT"
+    )
     @GetMapping("/rut/{rut}")
-    public ResponseEntity<?> buscarPorRut(@PathVariable String rut) {
-        try {
-            Estudiante estudiante = service.buscarPorRut(rut);
-            if (estudiante == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Estudiante no encontrado");
-            }
-            return ResponseEntity.ok(estudiante);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar estudiante");
-        }
+    public ResponseEntity<Estudiante> buscarPorRut(@PathVariable String rut) {
+        return ResponseEntity.ok(service.buscarPorRut(rut));
     }
 
-    // CREAR
+    @Operation(
+            summary = "Crear estudiante",
+            description = "Registra un nuevo estudiante"
+    )
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Estudiante estudiante) {
-        try {
-            if (estudiante.getRut() == null || estudiante.getRut().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El rut es obligatorio");
-            }
-            if (estudiante.getNombre() == null || estudiante.getNombre().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El nombre es obligatorio");
-            }
-            if (estudiante.getEmail() == null || estudiante.getEmail().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El email es obligatorio");
-            }
-            Estudiante nuevoEstudiante = service.guardar(estudiante);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoEstudiante);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear estudiante");
-        }
+    public ResponseEntity<Estudiante> guardar(@Valid @RequestBody Estudiante estudiante) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(estudiante));
     }
 
-    // ACTUALIZAR
+    @Operation(
+            summary = "Actualizar estudiante",
+            description = "Actualiza un estudiante existente"
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Estudiante estudianteActualizado) {
-        try {
-            if (estudianteActualizado.getRut() == null || estudianteActualizado.getRut().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El rut es obligatorio");
-            }
-            if (estudianteActualizado.getNombre() == null || estudianteActualizado.getNombre().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El nombre es obligatorio");
-            }
-            if (estudianteActualizado.getEmail() == null || estudianteActualizado.getEmail().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El email es obligatorio");
-            }
-
-            Estudiante estudiante = service.actualizar(id, estudianteActualizado);
-            if (estudiante == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Estudiante no encontrado");
-            }
-            return ResponseEntity.ok(estudiante);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar estudiante");
-        }
+    public ResponseEntity<Estudiante> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Estudiante estudiante) {
+        return ResponseEntity.ok(
+                service.actualizar(id, estudiante));
     }
 
-    // ELIMINAR
+    @Operation(
+            summary = "Eliminar estudiante",
+            description = "Elimina un estudiante por ID"
+    )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            Estudiante estudiante = service.eliminar(id);
-            if (estudiante == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Estudiante no encontrado");
-            }
-            return ResponseEntity.ok("Estudiante eliminado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar estudiante");
-        }
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok(
+                "Estudiante eliminado correctamente");
     }
 }
