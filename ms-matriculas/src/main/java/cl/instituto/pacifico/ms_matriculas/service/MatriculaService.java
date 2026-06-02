@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,36 +37,44 @@ public class MatriculaService {
 
     public Matricula crear(Matricula matricula) {
         log.info("Iniciando creación de matrícula");
-        log.info("Validando estudiante ID: {}",
-                matricula.getEstudianteId());
+        log.info("Validando estudiante ID: {}", matricula.getEstudianteId());
         EstudianteDTO estudiante = estudianteClient.get()
                 .uri("/api/v1/estudiantes/" + matricula.getEstudianteId())
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("Estudiante no existe");
+                            return Mono.error(new BusinessException("El estudiante indicado no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-estudiantes");
+                            return Mono.error(new BusinessException("Error en servicio de estudiantes"));
+                        })
                 .bodyToMono(EstudianteDTO.class)
                 .block();
-        if (estudiante == null) {
-            log.warn("Estudiante no encontrado");
-            throw new BusinessException(
-                    "El estudiante indicado no existe");
-        }
-
-        log.info("Estudiante validado correctamente");
-        log.info("Validando carrera ID: {}",
-                matricula.getCarreraId());
+        log.info("Validando carrera ID: {}", matricula.getCarreraId());
         CarreraDTO carrera = academicoClient.get()
                 .uri("/api/v1/academico/" + matricula.getCarreraId())
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("Carrera no existe");
+                            return Mono.error(new BusinessException("La carrera indicada no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-academico");
+                            return Mono.error(new BusinessException("Error en servicio académico"));
+                        })
                 .bodyToMono(CarreraDTO.class)
                 .block();
-        if (carrera == null) {
-            log.warn("Carrera no encontrada");
-            throw new BusinessException(
-                    "La carrera indicada no existe");
-        }
-        log.info("Carrera validada correctamente");
         matricula.setFechaMatricula(LocalDate.now());
         if (matricula.getEstado() == null) {
             matricula.setEstado("ACTIVA");
+        }
+        if (repository.existsByEstudianteIdAndCarreraId(matricula.getEstudianteId(), matricula.getCarreraId())) {
+            throw new BusinessException("El estudiante ya está matriculado en esta carrera");
         }
         Matricula nueva = repository.save(matricula);
         log.info("Matrícula creada correctamente con ID: {}", nueva.getId());

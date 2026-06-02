@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "matricula")
 @Schema(
         name = "Matricula",
         description = "Representa la matrícula de un estudiante en una carrera académica"
@@ -21,6 +22,7 @@ public class Matricula {
     private Long id;
 
     @NotNull(message = "El ID del estudiante es obligatorio")
+    @Column(name = "estudiante_id", nullable = false)
     @Schema(
             description = "Identificador del estudiante matriculado",
             example = "1"
@@ -28,6 +30,7 @@ public class Matricula {
     private Long estudianteId;
 
     @NotNull(message = "El ID de carrera es obligatorio")
+    @Column(name = "carrera_id", nullable = false)
     @Schema(
             description = "Identificador de la carrera seleccionada",
             example = "3"
@@ -35,12 +38,14 @@ public class Matricula {
     private Long carreraId;
 
     @NotBlank(message = "La sección es obligatoria")
+    @Column(name = "seccion", nullable = false, length = 50)
     @Schema(
             description = "Sección asignada al estudiante",
             example = "A-101"
     )
     private String seccion;
 
+    @Column(name = "fecha_matricula", updatable = false)
     @Schema(
             description = "Fecha en que se registró la matrícula",
             example = "2026-06-02",
@@ -48,6 +53,7 @@ public class Matricula {
     )
     private LocalDate fechaMatricula;
 
+    @Column(name = "estado", length = 20)
     @Schema(
             description = "Estado actual de la matrícula",
             example = "ACTIVA",

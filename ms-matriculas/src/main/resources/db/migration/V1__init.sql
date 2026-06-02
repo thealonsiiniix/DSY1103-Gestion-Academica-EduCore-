@@ -3,9 +3,9 @@ CREATE TABLE Matricula (
     estudiante_id BIGINT NOT NULL,
     carrera_id BIGINT NOT NULL,
     seccion VARCHAR(50),
-    fecha_matricula DATE,
-    estado VARCHAR(50)
+    fecha_matricula DATE DEFAULT CURRENT_DATE,
+    estado VARCHAR(20) NOT NULL
 );
 
-INSERT INTO Matricula (estudiante_id, carrera_id, seccion, fecha_matricula, estado)
-VALUES(1, 1, 'A-1', '2025-01-10', 'ACTIVA');
+CREATE UNIQUE INDEX uk_matricula_unica ON Matricula (estudiante_id, carrera_id);
+INSERT INTO Matricula (estudiante_id, carrera_id, seccion, estado)VALUES (1, 1, 'A-1', 'ACTIVA');

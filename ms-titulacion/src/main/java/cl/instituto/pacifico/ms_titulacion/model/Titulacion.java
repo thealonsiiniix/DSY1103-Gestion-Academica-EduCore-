@@ -1,20 +1,42 @@
 package cl.instituto.pacifico.ms_titulacion.model;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 @Entity
+@Schema(
+        name = "Titulacion",
+        description = "Representa el proceso de titulación de un estudiante"
+)
 public class Titulacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
+
     @NotNull(message = "matriculaId obligatorio")
+    @Schema(
+            description = "ID de matrícula",
+            example = "1"
+    )
     private Long matriculaId;
+
     @NotNull(message = "fecha obligatoria")
+    @Schema(
+            description = "Fecha de titulación",
+            example = "2026-06-02"
+    )
     private LocalDate fecha;
+
     @NotBlank(message = "estado obligatorio")
+    @Schema(
+            description = "Estado de titulación",
+            example = "TITULADO"
+    )
     private String estado;
 
     public Titulacion() {
