@@ -1,121 +1,127 @@
 package cl.instituto.pacifico.ms_empresas.controller;
+
 import cl.instituto.pacifico.ms_empresas.model.Empresa;
 import cl.instituto.pacifico.ms_empresas.service.EmpresaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/empresas")
+@Tag(
+        name = "Empresas",
+        description = "Operaciones relacionadas con las empresas asociadas al Instituto Pacífico"
+)
 public class EmpresaController {
     private final EmpresaService service;
     public EmpresaController(EmpresaService service) {
         this.service = service;
     }
 
-    // CREAR
+    @Operation(
+            summary = "Crear empresa",
+            description = "Permite registrar una nueva empresa en el sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Empresa creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Empresa empresa) {
-        try {
-            if (empresa.getNombre() == null || empresa.getNombre().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("nombre obligatorio");
-            }
-            if (empresa.getRut() == null || empresa.getRut().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("rut obligatorio");
-            }
-            if (empresa.getEmail() == null || empresa.getEmail().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("email obligatorio");
-            }
-            if (empresa.getConvenioVigente() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("convenio obligatorio");
-            }
-            Empresa nuevaEmpresa = service.crear(empresa);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevaEmpresa);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear empresa");
-        }
+    public ResponseEntity<Empresa> crear(
+            @Valid @RequestBody Empresa empresa) {
+
+        Empresa nuevaEmpresa = service.crear(empresa);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(nuevaEmpresa);
     }
 
-    // LISTAR
+    @Operation(
+            summary = "Listar empresas",
+            description = "Obtiene todas las empresas registradas"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
+    })
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            List<Empresa> empresas = service.listar();
-            return ResponseEntity.ok(empresas);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error al listar empresas");
-        }
+    public ResponseEntity<List<Empresa>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    // BUSCAR POR ID
+    @Operation(
+            summary = "Buscar empresa por ID",
+            description = "Obtiene una empresa utilizando su identificador"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresa encontrada"),
+            @ApiResponse(responseCode = "404", description = "Empresa no encontrada")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Empresa empresa = service.buscarPorId(id);
-            if (empresa == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("empresa no encontrada");
-            }
-            return ResponseEntity.ok(empresa);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error al buscar empresa");
-        }
+    public ResponseEntity<Empresa> buscarPorId(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
-    // BUSCAR POR RUT
+    @Operation(
+            summary = "Buscar empresa por RUT",
+            description = "Obtiene una empresa utilizando su RUT"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresa encontrada"),
+            @ApiResponse(responseCode = "404", description = "Empresa no encontrada")
+    })
     @GetMapping("/buscar/rut/{rut}")
-    public ResponseEntity<?> buscarPorRut(@PathVariable String rut) {
-        try {
-            Empresa empresa = service.buscarPorRut(rut);
-            if (empresa == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("empresa no encontrada");
-            }
-            return ResponseEntity.ok(empresa);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error");
-        }
+    public ResponseEntity<Empresa> buscarPorRut(
+            @PathVariable String rut) {
+
+        return ResponseEntity.ok(service.buscarPorRut(rut));
     }
 
-    // ACTUALIZAR
+    @Operation(
+            summary = "Actualizar empresa",
+            description = "Actualiza los datos de una empresa existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresa actualizada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Empresa no encontrada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Empresa empresa) {
-        try {
-            Empresa empresaActualizada = service.actualizar(id, empresa);
-            if (empresaActualizada == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("empresa no encontrada");
-            }
-            return ResponseEntity.ok(empresaActualizada);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error al actualizar empresa");
-        }
+    public ResponseEntity<Empresa> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Empresa empresa) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, empresa)
+        );
     }
 
-    // ELIMINAR
+    @Operation(
+            summary = "Eliminar empresa",
+            description = "Elimina una empresa registrada"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresa eliminada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Empresa no encontrada")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            boolean eliminado = service.eliminar(id);
-            if (!eliminado) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("empresa no encontrada");
-            }
-            return ResponseEntity.ok("empresa eliminada correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error al eliminar empresa");
-        }
+    public ResponseEntity<String> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                "Empresa eliminada correctamente"
+        );
     }
 }

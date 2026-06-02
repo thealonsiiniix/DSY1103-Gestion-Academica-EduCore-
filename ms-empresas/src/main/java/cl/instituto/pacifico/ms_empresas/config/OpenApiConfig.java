@@ -1,7 +1,9 @@
-package cl.instituto.pacifico.ms_estudiantes.config;
+package cl.instituto.pacifico.ms_empresas.config;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.*;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,12 +21,12 @@ public class OpenApiConfig {
                 .url("https://opensource.org/licenses/MIT");
 
         Info informacionMs = new Info()
-                .title("MS Estudiantes")
+                .title("MS Empresas")
                 .version("1.0")
                 .description("""
                         Microservicio encargado
-                        de la gestion de los
-                        estudiantes.
+                        de administrar empresas
+                        asociadas al instituto.
                         """)
                 .termsOfService("http://www.duocuc.cl")
                 .contact(contacto)

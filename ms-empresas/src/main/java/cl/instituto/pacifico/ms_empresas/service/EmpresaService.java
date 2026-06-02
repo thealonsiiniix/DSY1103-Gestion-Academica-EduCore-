@@ -1,4 +1,5 @@
 package cl.instituto.pacifico.ms_empresas.service;
+import cl.instituto.pacifico.ms_empresas.exception.ResourceNotFoundException;
 import cl.instituto.pacifico.ms_empresas.model.Empresa;
 import cl.instituto.pacifico.ms_empresas.repository.EmpresaRepository;
 import org.slf4j.Logger;
@@ -14,60 +15,43 @@ public class EmpresaService {
         this.repository = repository;
     }
 
-    // LISTAR
     public List<Empresa> listar() {
         log.info("Listando empresas");
         return repository.findAll();
     }
 
-    // BUSCAR POR ID
     public Empresa buscarPorId(Long id) {
-        log.info("Buscando empresa con ID: {}", id);
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Empresa no encontrada con ID: " + id));
     }
 
-    // BUSCAR POR RUT
     public Empresa buscarPorRut(String rut) {
-        log.info("Buscando empresa con RUT: {}", rut);
-        return repository.findByRut(rut).orElse(null);
+        return repository.findByRut(rut)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Empresa no encontrada con RUT: " + rut));
     }
 
-    // CREAR
     public Empresa crear(Empresa empresa) {
-        log.info("Creando empresa: {}", empresa.getNombre());
-        Empresa nueva = repository.save(empresa);
-        log.info("Empresa creada correctamente con ID: {}", nueva.getId());
-        return nueva;
+        log.info("Creando empresa {}", empresa.getNombre());
+        return repository.save(empresa);
     }
 
-    // ACTUALIZAR
     public Empresa actualizar(Long id, Empresa empresaActualizada) {
-        log.info("Actualizando empresa con ID: {}", id);
-        Empresa empresa = repository.findById(id).orElse(null);
-        if (empresa == null) {
-            log.error("Empresa no encontrada");
-            return null;
-        }
+        Empresa empresa = buscarPorId(id);
         empresa.setNombre(empresaActualizada.getNombre());
         empresa.setRut(empresaActualizada.getRut());
         empresa.setDireccion(empresaActualizada.getDireccion());
         empresa.setTelefono(empresaActualizada.getTelefono());
         empresa.setEmail(empresaActualizada.getEmail());
         empresa.setConvenioVigente(empresaActualizada.getConvenioVigente());
-        log.info("Empresa actualizada correctamente");
         return repository.save(empresa);
     }
 
-    // ELIMINAR
-    public boolean eliminar(Long id) {
-        log.info("Eliminando empresa con ID: {}", id);
-        Empresa empresa = repository.findById(id).orElse(null);
-        if (empresa == null) {
-            log.error("Empresa no encontrada");
-            return false;
-        }
-        repository.deleteById(id);
-        log.info("Empresa eliminada correctamente");
-        return true;
+    public void eliminar(Long id) {
+        Empresa empresa = buscarPorId(id);
+        repository.delete(empresa);
     }
 }
