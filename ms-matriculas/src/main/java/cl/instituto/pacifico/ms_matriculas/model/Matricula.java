@@ -1,24 +1,62 @@
 package cl.instituto.pacifico.ms_matriculas.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
+@Schema(
+        name = "Matricula",
+        description = "Representa la matrícula de un estudiante en una carrera académica"
+)
 public class Matricula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            title = "Identificador único de la matrícula",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
+
     @NotNull(message = "El ID del estudiante es obligatorio")
+    @Schema(
+            description = "Identificador del estudiante matriculado",
+            example = "1"
+    )
     private Long estudianteId;
+
     @NotNull(message = "El ID de carrera es obligatorio")
+    @Schema(
+            description = "Identificador de la carrera seleccionada",
+            example = "3"
+    )
     private Long carreraId;
+
     @NotBlank(message = "La sección es obligatoria")
+    @Schema(
+            description = "Sección asignada al estudiante",
+            example = "A-101"
+    )
     private String seccion;
+
+    @Schema(
+            description = "Fecha en que se registró la matrícula",
+            example = "2026-06-02",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private LocalDate fechaMatricula;
+
+    @Schema(
+            description = "Estado actual de la matrícula",
+            example = "ACTIVA",
+            allowableValues = {
+                    "ACTIVA",
+                    "SUSPENDIDA",
+                    "FINALIZADA"
+            }
+    )
     private String estado;
 
     public Matricula() {

@@ -36,9 +36,7 @@ public class EmpresaController {
     @PostMapping
     public ResponseEntity<Empresa> crear(
             @Valid @RequestBody Empresa empresa) {
-
         Empresa nuevaEmpresa = service.crear(empresa);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(nuevaEmpresa);

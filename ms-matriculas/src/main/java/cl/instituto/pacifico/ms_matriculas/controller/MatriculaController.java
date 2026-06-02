@@ -1,6 +1,11 @@
 package cl.instituto.pacifico.ms_matriculas.controller;
 import cl.instituto.pacifico.ms_matriculas.model.Matricula;
 import cl.instituto.pacifico.ms_matriculas.service.MatriculaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,101 +13,84 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/matriculas")
+@Tag(
+        name = "Matrículas",
+        description = "Operaciones relacionadas con la gestión de matrículas estudiantiles"
+)
 public class MatriculaController {
     private final MatriculaService service;
     public MatriculaController(MatriculaService service) {
         this.service = service;
     }
 
-    // CREAR
+    @Operation(
+            summary = "Crear matrícula",
+            description = "Registra una nueva matrícula validando estudiante y carrera"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Matrícula creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "422", description = "Regla de negocio incumplida")
+    })
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Matricula matricula) {
-        try {
-            if (matricula.getEstudianteId() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El ID del estudiante es obligatorio");
-            }
-            if (matricula.getCarreraId() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El ID de carrera es obligatorio");
-            }
-            if (matricula.getSeccion() == null || matricula.getSeccion().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("La sección es obligatoria");
-            }
-            Matricula nueva = service.crear(matricula);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nueva);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear matricula");
-        }
+    public ResponseEntity<Matricula> crear(@Valid @RequestBody Matricula matricula) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.crear(matricula));
     }
 
-    // LISTAR
+    @Operation(
+            summary = "Listar matrículas",
+            description = "Obtiene todas las matrículas registradas"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            List<Matricula> lista = service.listar();
-            return ResponseEntity.ok(lista);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar matrículas");
-        }
+    public ResponseEntity<List<Matricula>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
-    // BUSCAR POR ID
+    @Operation(
+            summary = "Buscar matrícula por ID",
+            description = "Obtiene una matrícula específica según su identificador"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Matrícula encontrada"),
+            @ApiResponse(responseCode = "404", description = "Matrícula no encontrada")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtener(@PathVariable Long id) {
-        try {
-            Matricula matricula = service.obtener(id);
-            if (matricula == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Matrícula no encontrada");
-            }
-            return ResponseEntity.ok(matricula);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar matrícula");
-        }
+    public ResponseEntity<Matricula> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(service.obtener(id));
     }
 
-    // ACTUALIZAR
+    @Operation(
+            summary = "Actualizar matrícula",
+            description = "Actualiza los datos de una matrícula existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Matrícula actualizada"),
+            @ApiResponse(responseCode = "404", description = "Matrícula no encontrada")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Matricula matricula) {
-        try {
-            if (matricula.getCarreraId() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El ID de carrera es obligatorio");
-            }
-            if (matricula.getSeccion() == null || matricula.getSeccion().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("La sección es obligatoria");
-            }
-            Matricula actualizada = service.actualizar(id, matricula);
-            if (actualizada == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Matrícula no encontrada");
-            }
-            return ResponseEntity.ok(actualizada);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar matricula");
-        }
+    public ResponseEntity<Matricula> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Matricula matricula) {
+
+        return ResponseEntity.ok(service.actualizar(id, matricula));
     }
 
-    // ELIMINAR
+    @Operation(
+            summary = "Eliminar matrícula",
+            description = "Elimina una matrícula existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Matrícula eliminada"),
+            @ApiResponse(responseCode = "404", description = "Matrícula no encontrada")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            Matricula matricula = service.obtener(id);
-            if (matricula == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Matrícula no encontrada");
-            }
-            service.eliminar(id);
-            return ResponseEntity.ok("Matrícula eliminada correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar matrícula");
-        }
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok("Matrícula eliminada correctamente");
     }
 }

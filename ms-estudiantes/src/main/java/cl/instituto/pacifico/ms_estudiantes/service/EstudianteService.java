@@ -1,4 +1,5 @@
 package cl.instituto.pacifico.ms_estudiantes.service;
+import cl.instituto.pacifico.ms_estudiantes.exception.BusinessException;
 import cl.instituto.pacifico.ms_estudiantes.model.Estudiante;
 import cl.instituto.pacifico.ms_estudiantes.repository.EstudianteRepository;
 import org.slf4j.Logger;
@@ -35,6 +36,14 @@ public class EstudianteService {
     // CREAR
     public Estudiante guardar(Estudiante estudiante) {
         log.info("Creando estudiante con rut: {}", estudiante.getRut());
+        if (repository.findByRut(estudiante.getRut()) != null) {
+            throw new BusinessException(
+                    "Ya existe un estudiante con el rut: " + estudiante.getRut());
+        }
+        if (repository.findByEmail(estudiante.getEmail()).isPresent()) {
+            throw new BusinessException(
+                    "Ya existe un estudiante con el email: " + estudiante.getEmail());
+        }
         Estudiante nuevo = repository.save(estudiante);
         log.info("Estudiante creado correctamente con ID: {}", nuevo.getId());
         return nuevo;
