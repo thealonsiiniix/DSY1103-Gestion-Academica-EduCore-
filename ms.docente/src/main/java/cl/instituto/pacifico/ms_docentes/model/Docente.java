@@ -1,5 +1,6 @@
 package cl.instituto.pacifico.ms_docentes.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,31 +11,41 @@ public class Docente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Schema(
+            description = "Identificador único del docente",
+            example = "1"
+    )
     private Long id;
 
-    @NotBlank(message = "El rut es obligatorio")
-    @Column(unique = true)
+    @Schema(
+            description = "RUT del docente",
+            example = "12345678-9"
+    )
     private String rut;
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @Schema(
+            description = "Nombre del docente",
+            example = "Juan"
+    )
     private String nombre;
 
-    @NotBlank(message = "El apellido es obligatorio")
+    @Schema(
+            description = "Apellido del docente",
+            example = "Pérez"
+    )
     private String apellido;
 
-    @Email(message = "Correo inválido")
-    @NotBlank(message = "El correo es obligatorio")
-    @Column(unique = true)
+    @Schema(
+            description = "Correo electrónico institucional",
+            example = "juan.perez@instituto.cl"
+    )
     private String correo;
 
     public Docente() {
     }
 
-    public Docente(Long id,
-                   String rut,
-                   String nombre,
-                   String apellido,
-                   String correo) {
+    public Docente(Long id, String rut, String nombre, String apellido, String correo) {
 
         this.id = id;
         this.rut = rut;

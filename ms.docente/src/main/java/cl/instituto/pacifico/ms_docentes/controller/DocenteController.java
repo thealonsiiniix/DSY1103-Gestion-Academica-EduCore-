@@ -2,13 +2,22 @@ package cl.instituto.pacifico.ms_docentes.controller;
 
 import cl.instituto.pacifico.ms_docentes.model.Docente;
 import cl.instituto.pacifico.ms_docentes.service.DocenteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/v1/docentes")
+
+@Tag(
+        name = "Docentes",
+        description = "Operaciones relacionadas con la gestión de docentes"
+)
 public class DocenteController {
 
     private final DocenteService service;
@@ -17,160 +26,124 @@ public class DocenteController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Listar docentes",
+            description = "Obtiene todos los docentes registrados"
+    )
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            List<Docente> docentes = service.listar();
-            return ResponseEntity.ok(docentes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar docentes");
-        }
+    public ResponseEntity<List<Docente>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
+    @Operation(
+            summary = "Buscar docente por ID",
+            description = "Obtiene un docente según su identificador"
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Docente docente = service.buscarPorId(id);
-            if (docente == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Docente no encontrado");
-            }
-            return ResponseEntity.ok(docente);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar docente");
-        }
+    public ResponseEntity<Docente> buscarPorId(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
     }
+
+    @Operation(
+            summary = "Buscar docente por RUT",
+            description = "Obtiene un docente según su RUT"
+    )
     @GetMapping("/rut/{rut}")
-    public ResponseEntity<?> buscarPorRut(@PathVariable String rut) {
-        try {
-            Docente docente = service.buscarPorRut(rut);
-            if (docente == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Docente no encontrado");
-            }
-            return ResponseEntity.ok(docente);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar docente");
-        }
+    public ResponseEntity<Docente> buscarPorRut(
+            @PathVariable String rut) {
+
+        return ResponseEntity.ok(
+                service.buscarPorRut(rut));
     }
+
+    @Operation(
+            summary = "Buscar docente por correo",
+            description = "Obtiene un docente según su correo"
+    )
     @GetMapping("/correo/{correo}")
-    public ResponseEntity<?> buscarPorCorreo(@PathVariable String correo) {
-        try {
-            Docente docente = service.buscarPorCorreo(correo);
-            if (docente == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Docente no encontrado");
-            }
-            return ResponseEntity.ok(docente);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar docente");
-        }
+    public ResponseEntity<Docente> buscarPorCorreo(
+            @PathVariable String correo) {
+
+        return ResponseEntity.ok(
+                service.buscarPorCorreo(correo));
     }
+
+    @Operation(
+            summary = "Buscar docentes por nombre",
+            description = "Obtiene docentes según su nombre"
+    )
     @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<?> buscarPorNombre(@PathVariable String nombre) {
-        try {
-            List<Docente> docentes = service.buscarPorNombre(nombre);
-            return ResponseEntity.ok(docentes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar docentes");
-        }
+    public ResponseEntity<List<Docente>> buscarPorNombre(
+            @PathVariable String nombre) {
+
+        return ResponseEntity.ok(
+                service.buscarPorNombre(nombre));
     }
 
+    @Operation(
+            summary = "Buscar docentes por apellido",
+            description = "Obtiene docentes según su apellido"
+    )
     @GetMapping("/apellido/{apellido}")
-    public ResponseEntity<?> buscarPorApellido(@PathVariable String apellido) {
-        try {
-            List<Docente> docentes = service.buscarPorApellido(apellido);
-            return ResponseEntity.ok(docentes);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar docentes");
-        }
+    public ResponseEntity<List<Docente>> buscarPorApellido(
+            @PathVariable String apellido) {
+
+        return ResponseEntity.ok(
+                service.buscarPorApellido(apellido));
     }
 
+    @Operation(
+            summary = "Obtener perfil completo",
+            description = "Obtiene el perfil completo del docente"
+    )
     @GetMapping("/{id}/perfil")
-    public ResponseEntity<?> obtenerPerfil(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(
-                    service.obtenerPerfilCompleto(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Perfil no encontrado");
-        }
+    public ResponseEntity<?> obtenerPerfil(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtenerPerfilCompleto(id));
     }
 
+    @Operation(
+            summary = "Crear docente",
+            description = "Registra un nuevo docente"
+    )
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Docente docente) {
-        try {
-            if (docente.getRut() == null
-                    || docente.getRut().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El rut es obligatorio");
-            }
-            if (docente.getNombre() == null
-                    || docente.getNombre().isBlank()) {
+    public ResponseEntity<Docente> guardar(
+            @Valid @RequestBody Docente docente) {
 
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El nombre es obligatorio");
-            }
-            if (docente.getCorreo() == null
-                    || docente.getCorreo().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El correo es obligatorio");
-            }
-            Docente nuevoDocente =
-                    service.guardar(docente);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoDocente);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear docente");
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(docente));
     }
 
+    @Operation(
+            summary = "Actualizar docente",
+            description = "Actualiza un docente existente"
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Docente docenteActualizado) {
-        try {
-            if (docenteActualizado.getRut() == null
-                    || docenteActualizado.getRut().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El rut es obligatorio");
-            }
-            if (docenteActualizado.getNombre() == null
-                    || docenteActualizado.getNombre().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El nombre es obligatorio");
-            }
-            if (docenteActualizado.getCorreo() == null
-                    || docenteActualizado.getCorreo().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("El correo es obligatorio");
-            }
-            Docente docente =
-                    service.actualizar(id,docenteActualizado);
-            if (docente == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Docente no encontrado");
-            }
-            return ResponseEntity.ok(docente);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar docente");
-        }
+    public ResponseEntity<Docente> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Docente docente) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, docente));
     }
 
+    @Operation(
+            summary = "Eliminar docente",
+            description = "Elimina un docente por ID"
+    )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            service.eliminar(id);
-            return ResponseEntity.ok("Docente eliminado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar docente");
-        }
+    public ResponseEntity<String> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                "Docente eliminado correctamente");
     }
 }
