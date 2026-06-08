@@ -13,7 +13,7 @@
     </parent>
 
     <groupId>cl.instituto.pacifico</groupId>
-    <artifactId>ms-docente</artifactId>
+    <artifactId>ms.docente</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
