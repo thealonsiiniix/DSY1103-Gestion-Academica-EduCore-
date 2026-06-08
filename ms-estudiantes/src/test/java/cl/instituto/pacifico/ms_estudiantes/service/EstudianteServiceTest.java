@@ -1,8 +1,7 @@
-package cl.instituto.pacifico.ms_estudiantes;
+package cl.instituto.pacifico.ms_estudiantes.service;
 import cl.instituto.pacifico.ms_estudiantes.exception.BusinessException;
 import cl.instituto.pacifico.ms_estudiantes.model.Estudiante;
 import cl.instituto.pacifico.ms_estudiantes.repository.EstudianteRepository;
-import cl.instituto.pacifico.ms_estudiantes.service.EstudianteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
