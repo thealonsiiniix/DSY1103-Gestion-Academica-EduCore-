@@ -2,9 +2,10 @@ package cl.instituto.pacifico.ms_finanzas.controller;
 
 import cl.instituto.pacifico.ms_finanzas.model.ConvenioPago;
 import cl.instituto.pacifico.ms_finanzas.service.ConvenioPagoService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/convenios")
-public class ConvenioPagoController {
 
-    private static final Logger log = LoggerFactory.getLogger(ConvenioPagoController.class);
+@Tag(
+        name = "Convenios de Pago",
+        description = "Operaciones relacionadas con la gestión de convenios de pago"
+)
+public class ConvenioPagoController {
 
     private final ConvenioPagoService service;
 
@@ -23,85 +27,65 @@ public class ConvenioPagoController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Listar convenios",
+            description = "Obtiene todos los convenios registrados"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Consulta exitosa"
+    )
     @GetMapping
-    public ResponseEntity<?> listar() {
-
-        try {
-            log.info("Listando convenios de pago");
-            List<ConvenioPago> convenios = service.listar();
-            return ResponseEntity.ok(convenios);
-        } catch (Exception e) {
-            log.error("Error al listar convenios");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar convenios");
-        }
+    public ResponseEntity<List<ConvenioPago>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
+    @Operation(
+            summary = "Buscar convenio por ID",
+            description = "Obtiene un convenio según su identificador"
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ConvenioPago> buscarPorId(
+            @PathVariable Long id) {
 
-        try {
-            log.info("Buscando convenio con ID {}", id);
-            ConvenioPago convenio = service.buscarPorId(id);
-            if (convenio == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Convenio no encontrado");
-            }
-            return ResponseEntity.ok(convenio);
-        } catch (Exception e) {
-            log.error("Error al buscar convenio");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar convenio");
-        }
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
     }
 
+    @Operation(
+            summary = "Crear convenio",
+            description = "Registra un nuevo convenio de pago"
+    )
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody ConvenioPago convenioPago) {
+    public ResponseEntity<ConvenioPago> guardar(
+            @Valid @RequestBody ConvenioPago convenioPago) {
 
-        try {
-            log.info("Guardando convenio");
-            ConvenioPago nuevoConvenio = service.guardar(convenioPago);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoConvenio);
-        } catch (Exception e) {
-            log.error("Error al crear convenio");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear convenio");
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(convenioPago));
     }
 
+    @Operation(
+            summary = "Actualizar convenio",
+            description = "Actualiza un convenio existente"
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ConvenioPago convenioPago) {
-        try {
-            log.info("Actualizando convenio con ID {}", id);
-            ConvenioPago convenioActualizado = service.actualizar(id, convenioPago);
-            if (convenioActualizado == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Convenio no encontrado");
-            }
+    public ResponseEntity<ConvenioPago> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ConvenioPago convenioPago) {
 
-            return ResponseEntity.ok(convenioActualizado);
-        } catch (Exception e) {
-            log.error("Error al actualizar convenio");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar convenio");
-        }
+        return ResponseEntity.ok(service.actualizar(id, convenioPago));
     }
 
+    @Operation(
+            summary = "Eliminar convenio",
+            description = "Elimina un convenio por ID"
+    )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            log.info("Eliminando convenio con ID {}", id);
-            ConvenioPago convenio = service.eliminar(id);
-            if (convenio == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Convenio no encontrado");
-            }
-            return ResponseEntity.ok("Convenio eliminado correctamente");
-        } catch (Exception e) {
-            log.error("Error al eliminar convenio");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar convenio");
-        }
+    public ResponseEntity<String> eliminar(
+            @PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok(
+                "Convenio eliminado correctamente");
     }
 }

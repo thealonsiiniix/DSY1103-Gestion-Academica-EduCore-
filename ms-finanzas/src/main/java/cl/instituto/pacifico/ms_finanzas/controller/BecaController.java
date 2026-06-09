@@ -2,8 +2,13 @@ package cl.instituto.pacifico.ms_finanzas.controller;
 
 import cl.instituto.pacifico.ms_finanzas.model.Beca;
 import cl.instituto.pacifico.ms_finanzas.service.BecaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +17,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/becas")
-public class BecaController {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(BecaController.class);
+@Tag(
+        name = "Becas",
+        description = "Operaciones relacionadas con la gestión de becas"
+)
+public class BecaController {
 
     private final BecaService service;
 
@@ -23,84 +30,65 @@ public class BecaController {
         this.service = service;
     }
 
-
+    @Operation(
+            summary = "Listar becas",
+            description = "Obtiene todas las becas registradas"
+    )
+    @ApiResponse(responseCode = "200", description = "Consulta exitosa")
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            log.info("Listando becas");
-            List<Beca> becas = service.listar();
-            return ResponseEntity.ok(becas);
-        } catch (Exception e) {
-            log.error("Error al listar becas");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar becas");
-        }
+    public ResponseEntity<List<Beca>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
-
+    @Operation(
+            summary = "Buscar beca por ID",
+            description = "Obtiene una beca según su identificador"
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            log.info("Buscando beca con ID {}", id);
-            Beca beca = service.buscarPorId(id);
-            if (beca == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Beca no encontrada");
-            }
-            return ResponseEntity.ok(beca);
-        } catch (Exception e) {
-            log.error("Error al buscar beca");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar beca");
-        }
+    public ResponseEntity<Beca> buscarPorId(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
     }
 
-
+    @Operation(
+            summary = "Crear beca",
+            description = "Registra una nueva beca"
+    )
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Beca beca) {
-        try {
-            log.info("Guardando beca");
-            Beca nuevaBeca = service.guardar(beca);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevaBeca);
-        } catch (Exception e) {
-            log.error("Error al crear beca");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al crear beca");
-        }
+    public ResponseEntity<Beca> guardar(
+            @Valid @RequestBody Beca beca) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(beca));
     }
 
+    @Operation(
+            summary = "Actualizar beca",
+            description = "Actualiza una beca existente"
+    )
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Beca beca) {
-        try {
-            log.info("Actualizando beca con ID {}", id);
-            Beca becaActualizada = service.actualizar(id, beca);
-            if (becaActualizada == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Beca no encontrada");
-            }
+    public ResponseEntity<Beca> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Beca beca) {
 
-            return ResponseEntity.ok(becaActualizada);
-        } catch (Exception e) {
-            log.error("Error al actualizar beca");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar beca");
-        }
+        return ResponseEntity.ok(
+                service.actualizar(id, beca));
     }
 
+    @Operation(
+            summary = "Eliminar beca",
+            description = "Elimina una beca por ID"
+    )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            log.info("Eliminando beca con ID {}", id);
-            Beca beca = service.eliminar(id);
-            if (beca == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Beca no encontrada");
-            }
-            return ResponseEntity.ok("Beca eliminada correctamente");
-        } catch (Exception e) {
-            log.error("Error al eliminar beca");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar beca");
-        }
+    public ResponseEntity<String> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.ok(
+                "Beca eliminada correctamente");
     }
 }

@@ -1,22 +1,29 @@
-
 package cl.instituto.pacifico.ms_finanzas.controller;
 
 import cl.instituto.pacifico.ms_finanzas.model.Arancel;
-import cl.instituto.pacifico.ms_finanzas.repository.ArancelRepository;
 import cl.instituto.pacifico.ms_finanzas.service.ArancelService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/aranceles")
-public class ArancelController {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ArancelController.class);
+@Tag(
+        name = "Aranceles",
+        description = "Operaciones relacionadas con la gestión de aranceles"
+)
+public class ArancelController {
 
     private final ArancelService service;
 
@@ -24,98 +31,86 @@ public class ArancelController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Listar aranceles",
+            description = "Obtiene todos los aranceles registrados"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            log.info("Listando aranceles");
-            List<Arancel> aranceles = service.listar();
-            return ResponseEntity.ok(aranceles);
-        } catch (Exception e) {
-            log.error("Error al listar aranceles");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al listar aranceles");
-        }
+    public ResponseEntity<List<Arancel>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
-
+    @Operation(
+            summary = "Buscar arancel por ID",
+            description = "Obtiene un arancel según su identificador"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Arancel encontrado"),
+            @ApiResponse(responseCode = "404", description = "Arancel no encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Arancel> buscarPorId(
+            @PathVariable Long id) {
 
-        try {
-            log.info("Buscando arancel con ID {}", id);
-            Arancel arancel = service.buscarPorId(id);
-            if (arancel == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Arancel no encontrado");
-            }
-            return ResponseEntity.ok(arancel);
-        } catch (Exception e) {
-            log.error("Error al buscar arancel");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar arancel");
-        }
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
     }
 
-
-    @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Arancel arancel) {
-        try {
-            log.info("Guardando arancel");
-            Arancel nuevoArancel = service.guardar(arancel);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(nuevoArancel);
-        } catch (Exception e) {
-            log.error("Error al crear arancel");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear arancel");
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Arancel arancel) {
-        try {
-            log.info("Actualizando arancel con ID {}", id);
-            Arancel arancelActualizado = service.actualizar(id, arancel);
-            if (arancelActualizado == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Arancel no encontrado");
-            }
-
-            return ResponseEntity.ok(arancelActualizado);
-        } catch (Exception e) {
-            log.error("Error al actualizar arancel");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al actualizar arancel");
-        }
-    }
-
+    @Operation(
+            summary = "Buscar arancel por RUT",
+            description = "Obtiene un arancel asociado a un estudiante por RUT"
+    )
     @GetMapping("/rut/{rut}")
-    public ResponseEntity<?> buscarPorRut(@PathVariable String rut) {
-        try {
-            Arancel arancel = service.buscarPorRut(rut);
-            if (arancel == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Estudiante no encontrado");
-            }
-            return ResponseEntity.ok(arancel);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al buscar estudiante");
-        }
+    public ResponseEntity<Arancel> buscarPorRut(
+            @PathVariable String rut) {
+
+        return ResponseEntity.ok(
+                service.buscarPorRut(rut));
     }
 
+    @Operation(
+            summary = "Crear arancel",
+            description = "Registra un nuevo arancel"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Arancel creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
+    @PostMapping
+    public ResponseEntity<Arancel> guardar(
+            @Valid @RequestBody Arancel arancel) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(arancel));
+    }
+
+    @Operation(
+            summary = "Actualizar arancel",
+            description = "Actualiza un arancel existente"
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<Arancel> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Arancel arancel) {
+
+        return ResponseEntity.ok(service.actualizar(id, arancel));
+    }
+
+    @Operation(
+            summary = "Eliminar arancel",
+            description = "Elimina un arancel por ID"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Arancel eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Arancel no encontrado")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            log.info("Eliminando arancel con ID {}", id);
-            Arancel arancel = service.eliminar(id);
-            if (arancel == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Arancel no encontrado");
-            }
-            return ResponseEntity.ok("Arancel eliminado correctamente");
-        } catch (Exception e) {
-            log.error("Error al eliminar arancel");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar arancel");
-        }
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok("Arancel eliminado correctamente");
     }
 }
