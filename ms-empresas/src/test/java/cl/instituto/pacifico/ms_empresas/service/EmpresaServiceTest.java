@@ -20,6 +20,7 @@ class EmpresaServiceTest {
     private EmpresaRepository repository;
     @InjectMocks
     private EmpresaService service;
+
     private Empresa crearEmpresa() {
         return new Empresa(1L, "Banco Estado", "76.123.456-7", "Puerto Montt", "+56912345678", "contacto@empresa.cl", true);
     }
@@ -44,7 +45,7 @@ class EmpresaServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción cuando ID no existe")
+    @DisplayName("Debe lanzar excepcion cuando ID no existe")
     void buscarPorId_noExiste() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.buscarPorId(99L)).isInstanceOf(ResourceNotFoundException.class);
@@ -60,7 +61,7 @@ class EmpresaServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción cuando RUT no existe")
+    @DisplayName("Debe lanzar excepcion cuando RUT no existe")
     void buscarPorRut_noExiste() {
         when(repository.findByRut("1-9")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.buscarPorRut("1-9"))
@@ -80,7 +81,7 @@ class EmpresaServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción si el RUT ya existe")
+    @DisplayName("Debe lanzar excepcion si el RUT ya existe")
     void crear_rutDuplicado() {
         Empresa empresa = crearEmpresa();
         when(repository.findByRut(empresa.getRut())).thenReturn(Optional.of(empresa));
@@ -91,7 +92,7 @@ class EmpresaServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar excepción si el email ya existe")
+    @DisplayName("Debe lanzar excepcion si el email ya existe")
     void crear_emailDuplicado() {
         Empresa empresa = crearEmpresa();
         when(repository.findByRut(empresa.getRut())).thenReturn(Optional.empty());

@@ -20,6 +20,7 @@ class EstudianteServiceTest {
     private EstudianteRepository repository;
     @InjectMocks
     private EstudianteService service;
+
     private Estudiante crearEstudiante() {
         return new Estudiante(1L, "20.123.456-7", "Juan Perez", "juan@gmail.com", "912345678", LocalDate.of(2000, 5, 10), LocalDate.now());}
 
