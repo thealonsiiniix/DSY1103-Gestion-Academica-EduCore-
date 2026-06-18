@@ -1,20 +1,47 @@
 package cl.instituto.pacifico.ms_asistencia.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+@Schema(
+        name = "Asistencia",
+        description = "Representa una asistencia registrado en el Instituto Pacífico"
+)
 
 @Entity
 public class Asistencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;           // ID de la asistencia
+    @Schema(
+            title = "Identificador único de la asistencia",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
+    private Long id;
+
+    @Schema(
+            description = "Identificador del estudiante",
+            example = "1"
+    )
     private Long estudianteId;
+
+    @Schema(
+            description = "Identificador del rut del estudiante",
+            example = "111223330"
+    )
     private String rutEstudiante;
+
+    @Schema(
+            description = "Nombre del estudiante",
+            example = "Juan Perez"
+    )
     private String nombreEstudiante;
+    @Schema(
+            description = "Fecha en que se registró la asistencia",
+            example = "2026-06-02",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private LocalDate fechaAsistencia;
 
     public Asistencia() {

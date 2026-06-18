@@ -1,27 +1,91 @@
 package cl.instituto.pacifico.ms_practicas.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+@Schema(
+        name = "Practica",
+        description = "Representa una practica registrado en el Instituto Pacífico"
+)
 
 @Entity
 public class Practica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            title = "Identificador único de la practica",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
+    @Schema(
+            description = "Identificador del estudiante",
+            example = "1"
+    )
     private Long estudianteId;
+    @Schema(
+            description = "Identificador del rut del estudiante",
+            example = "111223330"
+    )
     private String rutEstudiante;
+    @Schema(
+            description = "Nombre del estudiante",
+            example = "Juan Perez"
+    )
     private String nombreEstudiante;
+
+    @Schema(
+            description = "Email del estudiante",
+            example = "juan@gmail.com"
+    )
     private String emailEstudiante;
+    @Schema(
+            description = "Telefono del estudiante",
+            example = "945105119"
+    )
     private String telefonoEstudiante;
+    @Schema(
+            description = "Identificador de la empresa",
+            example = "1"
+    )
     private Long idEmpresa;
+    @Schema(
+            description = "Nombre de la empresa",
+            example = "Juan Perez"
+    )
     private String nombreEmpresa;
+    @Schema(
+            description = "Identificador del rut de la empresa",
+            example = "123456789"
+    )
     private String rutEmpresa;
+    @Schema(
+            description = "direccion del estudiante",
+            example = "Egaña 500"
+    )
     private String direccionEmpresa;
+    @Schema(
+            description = "Telefono de la empresa",
+            example = "300500000"
+    )
     private String telefonoEmpresa;
+    @Schema(
+            description = "Email de la empresa",
+            example = "FixTech@gmail.com"
+    )
     private String emailEmpresa;
+    @Schema(
+            description = "Convenio vigente con la institucion",
+            example = "true",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Boolean convenioVigenteEmpresa;
+    @Schema(
+            description = "Estado del arancel",
+            example = "pagado"
+    )
     private String estadoArancel;
 
     public Practica() {

@@ -2,6 +2,10 @@ package cl.instituto.pacifico.ms_practicas.controller;
 
 import cl.instituto.pacifico.ms_practicas.model.Practica;
 import cl.instituto.pacifico.ms_practicas.service.PracticaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/practica")
+@Tag(
+        name = "Practica",
+        description = "Operaciones relacionadas con la gestión de practicas de estudiantes"
+)
 public class PracticaController {
     // inyyectamos a feign para utilizarlo
     private final PracticaService service;
@@ -18,98 +26,88 @@ public class PracticaController {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Crear practica",
+            description = "Registra una practica validando estudiante"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Practica creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+    })
     // CREAR PRACTICA - POST
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Practica practica) {
-        try {
-            if (practica.getRutEstudiante() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("rut estudiante obligatorio");
-            }
-
-            if (practica.getIdEmpresa() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id empresa obligatorio");
-            }
-
-            Practica nuevaPractia = service.crear(practica);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPractia);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear practica");
-        }
-
-
+    public ResponseEntity<Practica> crear(@RequestBody Practica practica) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(practica));
     }
 
+    @Operation(
+            summary = "Listar practica",
+            description = "Obtiene todas las practicas registradas"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     // LISTAR - GET
     @GetMapping
-    public ResponseEntity<?> listar() {
-        try {
-            List<Practica> practica = service.listar();
-            return ResponseEntity.ok(practica);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
-        }
+    public ResponseEntity<List<Practica>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
-
+    @Operation(
+            summary = "Buscar practica por ID",
+            description = "Obtiene una practica específica según su identificador"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Practica encontrada"),
+            @ApiResponse(responseCode = "404", description = "Practica no encontrada")
+    })
     //  BUSCAR POR ID -GET
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Practica practica = service.buscarPorId(id);
-            if (practica == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("practica no encontrada");
-            }
-
-            return ResponseEntity.ok(practica);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
-        }
+    public ResponseEntity<Practica> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @Operation(
+            summary = "Buscar practica por rut estudiante",
+            description = "Obtiene una practica específica según el rut del estudiante"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Practica encontrada"),
+            @ApiResponse(responseCode = "404", description = "Practica no encontrada")
+    })
     //  BUSCAR POR ESTUDIANTE - GET
     @GetMapping("/estudiante/{rutEstudiante}")
-    public ResponseEntity<?> obtenerPorRut(@PathVariable String rutEstudiante){
-        try {
-            List<Practica> practicas = service.obtenerPorRut(rutEstudiante);
-
-            if (practicas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existen prácticas para este estudiante");
-            }
-
-            return ResponseEntity.ok(practicas);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
-        }
+    public ResponseEntity<List<Practica>> obtenerPorRut(@PathVariable String rutEstudiante){
+        return ResponseEntity.ok(service.obtenerPorRut(rutEstudiante));
     }
 
+    @Operation(
+            summary = "Eliminar practica",
+            description = "Elimina una practica existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Practica eliminada"),
+            @ApiResponse(responseCode = "404", description = "Practica no encontrada")
+    })
     // ELIMINAR POR ID - DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            if (!service.existePorId(id)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Practica no encontrada");
-            }
-            service.eliminar(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Practica eliminada");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
-        }
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok("Practica Eliminada");
     }
 
+    @Operation(
+            summary = "Actualizar practica",
+            description = "Actualiza los datos de una practica existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Practica actualizada"),
+            @ApiResponse(responseCode = "404", description = "Practica no encontrada")
+    })
     // PUT - ACTUALIZAR PRACTICA
     @PutMapping("/{id}")
     // ACTUALIZA LA PRACTICA SI EXISTE Y SI NO MUESTRA MENSAJE DE ERROR
-    public ResponseEntity<?> actualizarCompleta(@PathVariable Long id, @RequestBody Practica practica) {
-        try {
-            return service.actualizarCompleta(id, practica).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-
-        }catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar practica");
-        }
+    public ResponseEntity<Practica> actualizarCompleta(@PathVariable Long id, @RequestBody Practica practica) {
+        return ResponseEntity.ok(service.actualizarCompleta(id, practica));
     }
 }

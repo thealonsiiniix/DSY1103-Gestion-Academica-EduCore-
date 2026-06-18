@@ -1,17 +1,44 @@
 package cl.instituto.pacifico.ms_academico.model;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+@Schema(
+        name = "Academico",
+        description = "Representa una carrera registrada en el Instituto Pacífico"
+)
 @Entity
 public class Carrera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(
+            title = "Identificador único de academico",
+            example = "1",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
+
+    @Schema(
+            description = "Nombre de la carrera",
+            example = "Tecnico en Administracion"
+    )
     private String carrera;
+    @Schema(
+            description = "Asignaturas de la carrera",
+            example = "Finanzas"
+    )
     private String asignaturas;
+    @Schema(
+            description = "Malla de la carrera",
+            example = "A"
+    )
     private String mallas;
+    @Schema(
+            description = "Asignaturas de la carrera",
+            example = "Fundamentos en Finanzas"
+    )
     private String prerrequisitos;
 
     // contructor vacio para que podamos acceder a datos de otros MS

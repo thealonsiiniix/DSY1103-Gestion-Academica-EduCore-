@@ -4,12 +4,15 @@ import cl.instituto.pacifico.ms_practicas.controller.PracticaController;
 import cl.instituto.pacifico.ms_practicas.dto.ArancelDTO;
 import cl.instituto.pacifico.ms_practicas.dto.EmpresaDTO;
 import cl.instituto.pacifico.ms_practicas.dto.EstudianteDTO;
+import cl.instituto.pacifico.ms_practicas.exception.BusinessException;
+import cl.instituto.pacifico.ms_practicas.exception.ResourceNotFoundException;
 import cl.instituto.pacifico.ms_practicas.model.Practica;
 import cl.instituto.pacifico.ms_practicas.repository.PracticaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,50 +56,65 @@ public class PracticaService {
         EstudianteDTO e = client.get()
                 .uri("/api/v1/estudiantes/rut/"+practica.getRutEstudiante()) // endpoint al que llama
                 .retrieve() // ejecuta la llamada
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("Estudiante no existe");
+                            return Mono.error(new BusinessException("El estudiante indicado no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-estudiantes");
+                            return Mono.error(new BusinessException("Error en servicio de estudiantes"));
+                        })
                 .bodyToMono(EstudianteDTO.class)// cambia de json a obj
                 .block(); // detiene el flujo hasta recibir una respuesta
-        // Validar que exista
-        if (e == null) {
-            log.error("El estudiante no existe");
-            throw new RuntimeException("Estudiante no existe");
-        }
 
         // Obtener empresa
         log.info("Consultando ms-empresa");
         EmpresaDTO emp = clientEmpresa.get()
                 .uri("/api/v1/empresas/" + practica.getIdEmpresa())
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("la empresa no existe");
+                            return Mono.error(new BusinessException("La empresa indicada no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-estudiantes");
+                            return Mono.error(new BusinessException("Error en servicio empresa"));
+                        })
                 .bodyToMono(EmpresaDTO.class)
                 .block();
-
-        if (emp == null) {
-            log.error("La empresa no existe");
-            throw new RuntimeException("Empresa no existe");
-        }
 
         // Obtiene arancel de MS finanzas
         log.info("Consultando ms-finanzas");
         ArancelDTO arancel = clientFinanzas.get()
                 .uri("/api/v1/aranceles/rut/" +  practica.getRutEstudiante())
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("No se encontro informacion financiera");
+                            return Mono.error(new BusinessException("La carrera indicada no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-academico");
+                            return Mono.error(new BusinessException("Error en servicio de finanzas"));
+                        })
                 .bodyToMono(ArancelDTO.class)
                 .block();
 
-        if (arancel == null) {
-            log.error("El arancel no existe");
-            throw new RuntimeException("No se encontró información financiera");
-        }
-
         if (!arancel.getEstado().equalsIgnoreCase("pagado")) {
             log.error("El estudiante tiene deuodas");
-            throw new RuntimeException("El estudiante tiene deudas, no puede inscribir su practica");
+            throw new BusinessException("El estudiante tiene deudas, no puede inscribir su practica");
         }
 
         // Copia datos al modelo practica
         practica.setRutEstudiante(e.getRut());
         if (practicaRepository.existsByRutEstudiante(practica.getRutEstudiante())) {
-            log.info("Estudiamte tiene una práctica registrada");
-            throw new RuntimeException("El estudiante ya tiene una práctica registrada");
+            log.info("El estudiamte tiene una práctica registrada");
+            throw new BusinessException("El estudiante ya tiene una práctica registrada");
         }
 
         practica.setEstudianteId(e.getId());
@@ -125,14 +143,23 @@ public class PracticaService {
     // BUSCAR POR ID
     public Practica buscarPorId(Long id) {
         log.info("Buscando Practicas con ID: {}", id);
-        Optional<Practica> practica = practicaRepository.findById(id);
-        return practica.orElse(null);
+        return practicaRepository.findById(id).orElseThrow(() -> {
+                    log.warn("Practica no encontrada con ID: {}", id);
+                    return new ResourceNotFoundException("Practica con id " + id + " no encontrada");
+                });
     }
 
     // OBTENER PRACTICA POR RUT ESTUDIANTE
     public List<Practica> obtenerPorRut(String rutEstudiante){
         log.info("Buscando Practicas con Rut: {}", rutEstudiante);
-        return practicaRepository.findByRutEstudiante(rutEstudiante);
+
+        List<Practica> lista = practicaRepository.findByRutEstudiante(rutEstudiante);
+
+        if (lista.isEmpty()) {
+            throw new ResourceNotFoundException("No existen practica con este rut " + rutEstudiante);
+        }
+
+        return lista;
     }
 
     // SI EXISTE X ID
@@ -142,39 +169,39 @@ public class PracticaService {
 
     // ELIMINAR
     public void eliminar(Long id) {
-        log.info("Eliminando Practicas con ID: {}", id);
-        practicaRepository.deleteById(id);
-        log.info("Practicas eliminada correctamente");
-
-    }
-
-
-    // ACTUALIZAR LOS DATOS DE LA PRACTICA
-    public Optional<Practica> actualizarCompleta(Long id, Practica practicaActualizada){
-
-        // VALIDAR SI EXISTE LA PRACTICA
-        Optional<Practica> practicaOptional = practicaRepository.findById(id);
-
-        if (practicaOptional.isEmpty()) {
-            log.error("La practica con ID {} no existe", id);
-            throw new RuntimeException("Id practica no existe");
+        log.info("Eliminando Practica con ID: {}", id);
+        if (!practicaRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Practica con ID: " + id + " no existe");
         }
 
+        practicaRepository.deleteById(id);
+        log.info("Practica eliminada correctamente");
+    }
+
+    // ACTUALIZAR LOS DATOS DE LA PRACTICA
+    public Practica actualizarCompleta(Long id, Practica practicaActualizada){
+
+        // VALIDAR SI EXISTE LA PRACTICA
+        Practica practica = practicaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Practica con id " + id + " no existe"));
+
         // BUSCAR EMPRESA
+        log.info("Consultando ms-empresa");
         EmpresaDTO emp = clientEmpresa.get()
                 .uri("/api/v1/empresas/" + practicaActualizada.getIdEmpresa())
                 .retrieve()
+                .onStatus(status -> status.is4xxClientError(),
+                        response -> {
+                            log.warn("la empresa no existe");
+                            return Mono.error(new BusinessException("La empresa indicada no existe"));
+                        })
+                .onStatus(status -> status.is5xxServerError(),
+                        response -> {
+                            log.error("Error en ms-estudiantes");
+                            return Mono.error(new BusinessException("Error en servicio empresa"));
+                        })
                 .bodyToMono(EmpresaDTO.class)
                 .block();
-
-        // VALIDAR EMPRESA
-        if (emp == null) {
-            log.error("La empresa no puede ser null");
-            throw new RuntimeException("Empresa no puede ser null");
-        }
-
-        // OBTENER PRACTICA
-        Practica practica = practicaOptional.get();
 
         // ACTUALIZAR EMPRESA
         practica.setIdEmpresa(emp.getId());
@@ -189,6 +216,6 @@ public class PracticaService {
 
         // GUARDAR
         log.info("Practica actualizada correctamente");
-        return Optional.of(practicaRepository.save(practica));
+        return practicaRepository.save(practica);
     }
 }

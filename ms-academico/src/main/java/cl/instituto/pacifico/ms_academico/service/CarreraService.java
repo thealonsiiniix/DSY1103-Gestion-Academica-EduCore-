@@ -1,4 +1,5 @@
 package cl.instituto.pacifico.ms_academico.service;
+import cl.instituto.pacifico.ms_academico.exception.ResourceNotFoundException;
 import cl.instituto.pacifico.ms_academico.model.Carrera;
 import cl.instituto.pacifico.ms_academico.repository.CarreraRepository;
 import org.slf4j.Logger;
@@ -23,7 +24,10 @@ public class CarreraService {
     // BUSCAR POR ID
     public Carrera buscarPorId(Long id) {
         log.info("Buscando Carrera con ID: {}", id);
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow(() -> {
+                    log.warn("Carrera no encontrada con ID: {}", id);
+                    return new ResourceNotFoundException("Carrera no encontrada con ID: " + id);
+                });
     }
 
     // BUSCAR POR NOMBRE
