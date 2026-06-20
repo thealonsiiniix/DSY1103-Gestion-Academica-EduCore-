@@ -5,6 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 @Schema(
         name = "Practica",
         description = "Representa una practica registrado en el Instituto Pacífico"
@@ -25,6 +28,8 @@ public class Practica {
             example = "1"
     )
     private Long estudianteId;
+
+    @NotBlank(message = "El rut del estudiante es obligatorio")
     @Schema(
             description = "Identificador del rut del estudiante",
             example = "111223330"
@@ -46,6 +51,8 @@ public class Practica {
             example = "945105119"
     )
     private String telefonoEstudiante;
+
+    @NotNull(message = "El ID empresa es obligatorio")
     @Schema(
             description = "Identificador de la empresa",
             example = "1"

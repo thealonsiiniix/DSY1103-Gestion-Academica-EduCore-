@@ -2,6 +2,8 @@ package cl.instituto.pacifico.ms_asistencia.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 @Schema(
@@ -26,6 +28,7 @@ public class Asistencia {
     )
     private Long estudianteId;
 
+    @NotBlank(message = "El rut del estudiante es obligatorio")
     @Schema(
             description = "Identificador del rut del estudiante",
             example = "111223330"
@@ -37,6 +40,7 @@ public class Asistencia {
             example = "Juan Perez"
     )
     private String nombreEstudiante;
+
     @Schema(
             description = "Fecha en que se registró la asistencia",
             example = "2026-06-02",
