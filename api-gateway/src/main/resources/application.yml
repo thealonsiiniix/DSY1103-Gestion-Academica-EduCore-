@@ -1,0 +1,68 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: estudiantes-route
+          uri: ${MS_ESTUDIANTES_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/estudiantes/**
+
+        - id: docente-route
+          uri: ${MS_DOCENTE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/docente/**
+
+        - id: academico-route
+          uri: ${MS_ACADEMICO_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/v1/academico/**
+
+        - id: matriculas-route
+          uri: ${MS_MATRICULAS_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/v1/matriculas/**
+
+        - id: evaluacion-route
+          uri: ${MS_EVALUACION_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/v1/evaluaciones/**
+
+        - id: asistencia-route
+          uri: ${MS_ASISTENCIA_URI:http://localhost:8086}
+          predicates:
+            - Path=/api/v1/asistencia/**
+
+        - id: aranceles-route
+          uri: ${MS_FINANZAS_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/v1/aranceles/**
+
+        - id: becas-route
+          uri: ${MS_FINANZAS_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/v1/becas/**
+
+        - id: convenios-route
+          uri: ${MS_FINANZAS_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/v1/convenios/**
+
+        - id: practicas-route
+          uri: ${MS_PRACTICAS_URI:http://localhost:8088}
+          predicates:
+            - Path=/api/v1/practica/**
+
+        - id: empresas-route
+          uri: ${MS_EMPRESAS_URI:http://localhost:8089}
+          predicates:
+            - Path=/api/v1/empresas/**
+
+        - id: titulacion-route
+          uri: ${MS_TITULACION_URI:http://localhost:8090}
+          predicates:
+            - Path=/api/v1/titulaciones/**

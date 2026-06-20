@@ -1,0 +1,90 @@
+services:
+  ms-estudiantes:
+    build: ./ms-estudiantes
+    container_name: ms-estudiantes
+    ports:
+      - "8081:8081"
+
+  ms-docentes:
+    build: ./ms.docente
+    container_name: ms-docentes
+    ports:
+      - "8082:8082"
+
+  ms-academico:
+    build: ./ms-academico
+    container_name: ms-academico
+    ports:
+      - "8083:8083"
+
+  ms-matriculas:
+    build: ./ms-matriculas
+    container_name: ms-matriculas
+    ports:
+      - "8084:8084"
+
+  ms-evaluacion:
+    build: ./ms-evaluacion
+    container_name: ms-evaluacion
+    ports:
+      - "8085:8085"
+
+  ms-asistencia:
+    build: ./ms-asistencia
+    container_name: ms-asistencia
+    ports:
+      - "8086:8086"
+
+  ms-finanzas:
+      build: ./ms-finanzas
+      container_name: ms-finanzas
+      ports:
+        - "8087:8087"
+
+  ms-practicas:
+    build: ./ms-practicas
+    container_name: ms-practicas
+    ports:
+      - "8088:8088"
+
+  ms-empresas:
+    build: ./ms-empresas
+    container_name: ms-empresas
+    ports:
+      - "8089:8089"
+
+  ms-titulacion:
+    build: ./ms-titulacion
+    container_name: ms-titulacion
+    ports:
+      - "8090:8090"
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+
+    environment:
+      MS_ESTUDIANTES_URI: http://ms-estudiantes:8081
+      MS_DOCENTES_URI: http://ms-docente:8082
+      MS_ACADEMICO_URI: http://ms-academico:8083
+      MS_MATRICULAS_URI: http://ms-matriculas:8084
+      MS_EVALUACION_URI: http://ms-evaluaciones:8085
+      MS_ASISTENCIA_URI: http://ms-asistencia:8086
+      MS_FINANZAS_URI: http://ms-finanzas:8087
+      MS_PRACTICAS_URI: http://ms-practica:8088
+      MS_EMPRESAS_URI: http://ms-empresas:8089
+      MS_TITULACION_URI: http://ms-titulaciones:8090
+
+    depends_on:
+     - ms-estudiantes
+     - ms-docentes
+     - ms-academico
+     - ms-matriculas
+     - ms-evaluacion
+     - ms-asistencia
+     - ms-finanzas
+     - ms-practicas
+     - ms-empresas
+     - ms-titulacion
