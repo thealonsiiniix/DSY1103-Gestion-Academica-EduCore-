@@ -18,24 +18,29 @@ public class Docente {
     )
     private Long id;
 
+    @NotBlank(message = "El rut es obligatorio")
     @Schema(
             description = "RUT del docente",
             example = "12345678-9"
     )
     private String rut;
 
+    @NotBlank(message = "El nombre es obligatorio")
     @Schema(
             description = "Nombre del docente",
             example = "Juan"
     )
     private String nombre;
 
+    @NotBlank(message = "El apellido es obligatorio")
     @Schema(
             description = "Apellido del docente",
             example = "Pérez"
     )
     private String apellido;
 
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "Debe ingresar un correo válido")
     @Schema(
             description = "Correo electrónico institucional",
             example = "juan.perez@instituto.cl"
@@ -46,7 +51,6 @@ public class Docente {
     }
 
     public Docente(Long id, String rut, String nombre, String apellido, String correo) {
-
         this.id = id;
         this.rut = rut;
         this.nombre = nombre;

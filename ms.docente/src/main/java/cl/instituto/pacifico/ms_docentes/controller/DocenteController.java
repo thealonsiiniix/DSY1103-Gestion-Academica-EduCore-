@@ -2,18 +2,21 @@ package cl.instituto.pacifico.ms_docentes.controller;
 
 import cl.instituto.pacifico.ms_docentes.model.Docente;
 import cl.instituto.pacifico.ms_docentes.service.DocenteService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/docentes")
-
 @Tag(
         name = "Docentes",
         description = "Operaciones relacionadas con la gestión de docentes"
@@ -100,7 +103,7 @@ public class DocenteController {
             description = "Obtiene el perfil completo del docente"
     )
     @GetMapping("/{id}/perfil")
-    public ResponseEntity<?> obtenerPerfil(
+    public ResponseEntity<Map<String, Object>> obtenerPerfil(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(

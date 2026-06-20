@@ -40,6 +40,7 @@ public class ArancelController {
     })
     @GetMapping
     public ResponseEntity<List<Arancel>> listar() {
+
         return ResponseEntity.ok(service.listar());
     }
 
@@ -63,6 +64,10 @@ public class ArancelController {
             summary = "Buscar arancel por RUT",
             description = "Obtiene un arancel asociado a un estudiante por RUT"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Arancel encontrado"),
+            @ApiResponse(responseCode = "404", description = "Arancel no encontrado")
+    })
     @GetMapping("/rut/{rut}")
     public ResponseEntity<Arancel> buscarPorRut(
             @PathVariable String rut) {
@@ -92,12 +97,18 @@ public class ArancelController {
             summary = "Actualizar arancel",
             description = "Actualiza un arancel existente"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Arancel actualizado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Arancel no encontrado")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Arancel> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody Arancel arancel) {
 
-        return ResponseEntity.ok(service.actualizar(id, arancel));
+        return ResponseEntity.ok(
+                service.actualizar(id, arancel));
     }
 
     @Operation(
@@ -109,8 +120,12 @@ public class ArancelController {
             @ApiResponse(responseCode = "404", description = "Arancel no encontrado")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(
+            @PathVariable Long id) {
+
         service.eliminar(id);
-        return ResponseEntity.ok("Arancel eliminado correctamente");
+
+        return ResponseEntity.ok(
+                "Arancel eliminado correctamente");
     }
 }

@@ -5,8 +5,12 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
@@ -15,7 +19,7 @@ public class OpenApiConfig {
     public OpenAPI configurarOpenApi() {
 
         Contact contacto = new Contact()
-                .name("Equipo Instituto Pacifico")
+                .name("Equipo EduCore")
                 .email("equipo@instituto.cl")
                 .url("https://www.duocuc.cl");
 
@@ -25,21 +29,33 @@ public class OpenApiConfig {
 
         Info informacionMs = new Info()
                 .title("MS Docentes")
-                .version("1.0")
+                .version("1.0.0")
                 .description("""
-                        Microservicio encargado
-                        de la gestion de los
-                        docentes del instituto.
+                        Microservicio encargado de la gestión
+                        de docentes dentro del sistema
+                        EduCore.
+
+                        Permite:
+                        - Registrar docentes
+                        - Buscar docentes
+                        - Actualizar docentes
+                        - Eliminar docentes
+                        - Consultar perfiles completos
                         """)
-                .termsOfService("http://www.duocuc.cl")
+                .termsOfService("https://www.duocuc.cl")
                 .contact(contacto)
                 .license(licencia);
 
+        Server localServer = new Server()
+                .url("http://localhost:8082")
+                .description("Servidor Local de Desarrollo");
+
         return new OpenAPI()
                 .info(informacionMs)
+                .servers(List.of(localServer))
                 .externalDocs(
                         new ExternalDocumentation()
-                                .description("Repositorio oficial del proyecto en GitHub")
+                                .description("Repositorio oficial del proyecto")
                                 .url("https://github.com/thealonsiiniix/DSY1103-Gestion-Academica-EduCore-")
                 );
     }

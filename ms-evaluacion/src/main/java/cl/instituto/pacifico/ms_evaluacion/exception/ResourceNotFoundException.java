@@ -1,4 +1,4 @@
-package cl.instituto.pacifico.ms_docentes.exception;
+package cl.instituto.pacifico.ms_evaluacion.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

@@ -1,10 +1,15 @@
 package cl.instituto.pacifico.ms_docentes.service;
 
+import cl.instituto.pacifico.ms_docentes.exception.BusinessException;
+import cl.instituto.pacifico.ms_docentes.exception.ResourceNotFoundException;
 import cl.instituto.pacifico.ms_docentes.model.Docente;
 import cl.instituto.pacifico.ms_docentes.repository.DocenteRepository;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -33,20 +38,28 @@ public class DocenteService {
 
         return repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Docente no encontrado"));
     }
 
     public Docente guardar(Docente docente) {
 
-        if (repository.findByRut(
-                docente.getRut()).isPresent()) {
+        if (repository.findByRut(docente.getRut()).isPresent()) {
 
             log.error("El rut {} ya existe",
                     docente.getRut());
 
-            throw new RuntimeException(
+            throw new BusinessException(
                     "El rut ya existe");
+        }
+
+        if (repository.findByCorreo(docente.getCorreo()).isPresent()) {
+
+            log.error("El correo {} ya existe",
+                    docente.getCorreo());
+
+            throw new BusinessException(
+                    "El correo ya existe");
         }
 
         log.info("Guardando docente {}",
@@ -60,7 +73,7 @@ public class DocenteService {
 
         Docente docente = repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Docente no encontrado"));
 
         docente.setRut(nuevo.getRut());
@@ -68,8 +81,7 @@ public class DocenteService {
         docente.setApellido(nuevo.getApellido());
         docente.setCorreo(nuevo.getCorreo());
 
-        log.info("Actualizando docente {}",
-                id);
+        log.info("Actualizando docente {}", id);
 
         return repository.save(docente);
     }
@@ -78,62 +90,53 @@ public class DocenteService {
 
         Docente docente = repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Docente no encontrado"));
 
-        log.warn("Eliminando docente {}",
-                id);
+        log.warn("Eliminando docente {}", id);
 
         repository.delete(docente);
     }
 
     public Docente buscarPorRut(String rut) {
 
-        log.info("Buscando docente por rut {}",
-                rut);
+        log.info("Buscando docente por rut {}", rut);
 
         return repository.findByRut(rut)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Docente no encontrado"));
     }
 
     public Docente buscarPorCorreo(String correo) {
 
-        log.info("Buscando docente por correo {}",
-                correo);
+        log.info("Buscando docente por correo {}", correo);
 
         return repository.findByCorreo(correo)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Docente no encontrado"));
     }
 
-    public List<Docente> buscarPorNombre(
-            String nombre) {
+    public List<Docente> buscarPorNombre(String nombre) {
 
-        log.info("Buscando docentes por nombre {}",
-                nombre);
+        log.info("Buscando docentes por nombre {}", nombre);
 
         return repository.findByNombre(nombre);
     }
 
-    public List<Docente> buscarPorApellido(
-            String apellido) {
+    public List<Docente> buscarPorApellido(String apellido) {
 
-        log.info("Buscando docentes por apellido {}",
-                apellido);
+        log.info("Buscando docentes por apellido {}", apellido);
 
         return repository.findByApellido(apellido);
     }
 
-    public Map<String, Object> obtenerPerfilCompleto(
-            Long id) {
+    public Map<String, Object> obtenerPerfilCompleto(Long id) {
 
         Docente docente = buscarPorId(id);
 
-        log.info("Consultando perfil completo {}",
-                id);
+        log.info("Consultando perfil completo {}", id);
 
         return Map.of(
                 "docente", docente,

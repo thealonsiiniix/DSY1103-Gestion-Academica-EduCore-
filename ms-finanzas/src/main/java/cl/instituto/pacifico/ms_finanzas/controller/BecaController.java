@@ -5,6 +5,7 @@ import cl.instituto.pacifico.ms_finanzas.service.BecaService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
@@ -17,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/becas")
-
 @Tag(
         name = "Becas",
         description = "Operaciones relacionadas con la gestión de becas"
@@ -34,7 +34,9 @@ public class BecaController {
             summary = "Listar becas",
             description = "Obtiene todas las becas registradas"
     )
-    @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     @GetMapping
     public ResponseEntity<List<Beca>> listar() {
         return ResponseEntity.ok(service.listar());
@@ -44,6 +46,10 @@ public class BecaController {
             summary = "Buscar beca por ID",
             description = "Obtiene una beca según su identificador"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Beca encontrada"),
+            @ApiResponse(responseCode = "404", description = "Beca no encontrada")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Beca> buscarPorId(
             @PathVariable Long id) {
@@ -56,6 +62,10 @@ public class BecaController {
             summary = "Crear beca",
             description = "Registra una nueva beca"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Beca creada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping
     public ResponseEntity<Beca> guardar(
             @Valid @RequestBody Beca beca) {
@@ -69,6 +79,11 @@ public class BecaController {
             summary = "Actualizar beca",
             description = "Actualiza una beca existente"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Beca actualizada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Beca no encontrada")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Beca> actualizar(
             @PathVariable Long id,
@@ -82,6 +97,10 @@ public class BecaController {
             summary = "Eliminar beca",
             description = "Elimina una beca por ID"
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Beca eliminada correctamente"),
+            @ApiResponse(responseCode = "404", description = "Beca no encontrada")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminar(
             @PathVariable Long id) {

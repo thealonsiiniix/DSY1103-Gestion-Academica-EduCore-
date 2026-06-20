@@ -2,6 +2,8 @@ package cl.instituto.pacifico.ms_evaluacion.service;
 
 import cl.instituto.pacifico.ms_evaluacion.dto.MatriculaDTO;
 import cl.instituto.pacifico.ms_evaluacion.dto.ResultadoDTO;
+import cl.instituto.pacifico.ms_evaluacion.exception.BusinessException;
+import cl.instituto.pacifico.ms_evaluacion.exception.ResourceNotFoundException;
 import cl.instituto.pacifico.ms_evaluacion.model.Evaluacion;
 import cl.instituto.pacifico.ms_evaluacion.repository.EvaluacionRepository;
 
@@ -25,14 +27,12 @@ public class EvaluacionService {
         this.repository = repository;
     }
 
-    // conexión ms-matriculas
     private final WebClient client = WebClient.builder()
             .baseUrl("http://localhost:8084")
             .defaultHeaders(headers ->
                     headers.setBasicAuth("admin", "1234"))
             .build();
 
-    // Crear evaluación
     public Evaluacion crear(Evaluacion evaluacion) {
 
         log.info("Creando evaluación");
@@ -43,44 +43,38 @@ public class EvaluacionService {
                 .bodyToMono(MatriculaDTO.class)
                 .block();
 
-
         if (matricula == null) {
-
-            log.error("La matrícula no existe");
-
-            throw new RuntimeException("La matrícula no existe");
+            throw new BusinessException("La matrícula no existe");
         }
 
         return repository.save(evaluacion);
     }
 
-    // Listar
     public List<Evaluacion> listar() {
-
         log.info("Listando evaluaciones");
-
         return repository.findAll();
     }
 
-    // Buscar por ID
     public Evaluacion buscarPorId(Long id) {
-
         log.info("Buscando evaluación con ID {}", id);
 
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Evaluación no encontrada"));
     }
 
-    // Eliminar
     public void eliminar(Long id) {
-
         log.info("Eliminando evaluación con ID {}", id);
 
-        repository.deleteById(id);
+        Evaluacion evaluacion = buscarPorId(id);
+        repository.delete(evaluacion);
     }
 
-    // Actualizar
     public Evaluacion actualizar(Long id, Evaluacion nueva) {
+
         log.info("Actualizando evaluación con ID {}", id);
+
+        Evaluacion evaluacion = buscarPorId(id);
 
         MatriculaDTO matricula = client.get()
                 .uri("/api/v1/matriculas/" + nueva.getMatriculaId())
@@ -88,21 +82,8 @@ public class EvaluacionService {
                 .bodyToMono(MatriculaDTO.class)
                 .block();
 
-        Evaluacion evaluacion = buscarPorId(id);
-
-
         if (matricula == null) {
-
-            log.error("La matrícula no existe");
-
-            throw new RuntimeException("La matrícula no existe");
-        }
-
-        if (evaluacion == null) {
-
-            log.warn("Evaluación no encontrada");
-
-            return null;
+            throw new BusinessException("La matrícula no existe");
         }
 
         evaluacion.setMatriculaId(nueva.getMatriculaId());
@@ -111,15 +92,15 @@ public class EvaluacionService {
         return repository.save(evaluacion);
     }
 
-    // Resultado final
     public ResultadoDTO calcularResultado(Long matriculaId) {
+
         log.info("Calculando resultado para matrícula {}", matriculaId);
+
         List<Evaluacion> notas =
                 repository.findByMatriculaId(matriculaId);
 
         if (notas.isEmpty()) {
-            log.error("No existen evaluaciones");
-            throw new RuntimeException("No existen evaluaciones");
+            throw new ResourceNotFoundException("No existen evaluaciones");
         }
 
         double promedio = notas.stream()
