@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 @Schema(
         name = "Academico",
@@ -20,23 +21,29 @@ public class Carrera {
     )
     private Long id;
 
+    @NotBlank(message = "La carrera es obligatorio")
     @Schema(
             description = "Nombre de la carrera",
             example = "Tecnico en Administracion"
     )
     private String carrera;
+
+    @NotBlank(message = "La asignatura es obligatorio")
     @Schema(
             description = "Asignaturas de la carrera",
             example = "Finanzas"
     )
     private String asignaturas;
+
+    @NotBlank(message = "La malla de la carrera es obligatorio")
     @Schema(
             description = "Malla de la carrera",
             example = "A"
     )
     private String mallas;
+
     @Schema(
-            description = "Asignaturas de la carrera",
+            description = "prerequisto de la carrera",
             example = "Fundamentos en Finanzas"
     )
     private String prerrequisitos;
