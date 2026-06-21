@@ -28,7 +28,7 @@ public class AsistenciaService {
 
     // DEFINIMOS LA DIRECCION DEL MICROSERVVICIO QUE USAREMOS EN LA VARIABLE CLIENT
     private final WebClient client = WebClient.builder()
-            .baseUrl("http://localhost:8081")
+            .baseUrl("http://ms-estudiantes:8081")
             .defaultHeaders(headers ->
             headers.setBasicAuth("admin", "1234"))
             .build();

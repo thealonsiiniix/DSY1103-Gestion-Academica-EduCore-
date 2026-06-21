@@ -28,7 +28,7 @@ public class EvaluacionService {
     }
 
     private final WebClient client = WebClient.builder()
-            .baseUrl("http://localhost:8084")
+            .baseUrl("http://ms-matriculas:8084")
             .defaultHeaders(headers ->
                     headers.setBasicAuth("admin", "1234"))
             .build();

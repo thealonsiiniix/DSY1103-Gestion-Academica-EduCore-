@@ -20,7 +20,7 @@ public class TitulacionService {
     }
 
     private final WebClient evaluacionClient = WebClient.builder()
-            .baseUrl("http://localhost:8085")
+            .baseUrl("http://ms-evaluacion:8085")
             .defaultHeaders(headers -> headers.setBasicAuth("admin", "1234"))
             .build();
 

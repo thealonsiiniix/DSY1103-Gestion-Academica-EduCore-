@@ -31,19 +31,19 @@ public class PracticaService {
     }
 
     private final WebClient client = WebClient.builder()
-            .baseUrl("http://localhost:8081")
+            .baseUrl("http://ms-estudiantes:8081")
             .defaultHeaders(headers ->
             headers.setBasicAuth("admin", "1234"))
             .build();
 
     private final WebClient clientEmpresa = WebClient.builder()
-            .baseUrl("http://localhost:8089")
+            .baseUrl("http://ms-empresas:8089")
             .defaultHeaders(headers ->
             headers.setBasicAuth("admin", "1234"))
             .build();
 
     private final WebClient clientFinanzas = WebClient.builder()
-            .baseUrl("http://localhost:8087")
+            .baseUrl("http://ms-finanzas:8087")
             .defaultHeaders(headers ->
             headers.setBasicAuth("admin", "1234"))
             .build();
