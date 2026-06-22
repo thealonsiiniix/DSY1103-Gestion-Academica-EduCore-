@@ -162,11 +162,6 @@ public class PracticaService {
         return lista;
     }
 
-    // SI EXISTE X ID
-    public boolean existePorId(Long id){
-        return practicaRepository.existsById(id);
-    }
-
     // ELIMINAR
     public void eliminar(Long id) {
         log.info("Eliminando Practica con ID: {}", id);

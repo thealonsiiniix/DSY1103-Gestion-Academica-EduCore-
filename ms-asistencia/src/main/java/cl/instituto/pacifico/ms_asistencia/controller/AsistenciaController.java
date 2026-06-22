@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/asistencia")
 @Tag(
-        name = "Matrículas",
+        name = "Asistencia",
         description = "Operaciones relacionadas con la gestión de asistencia de estudiantes"
 )
 public class AsistenciaController {
