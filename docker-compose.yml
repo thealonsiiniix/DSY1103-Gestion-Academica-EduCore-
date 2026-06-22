@@ -25,7 +25,7 @@ services:
 
   ms-evaluacion:
     build: ./ms-evaluacion
-    container_name: ms-evaluacion
+    container_name: ms-evaluaciones
     ports:
       - "8085:8085"
 
@@ -43,7 +43,7 @@ services:
 
   ms-practicas:
     build: ./ms-practicas
-    container_name: ms-practicas
+    container_name: ms-practica
     ports:
       - "8088:8088"
 
@@ -55,7 +55,7 @@ services:
 
   ms-titulacion:
     build: ./ms-titulacion
-    container_name: ms-titulacion
+    container_name: ms-titulaciones
     ports:
       - "8090:8090"
 
@@ -67,13 +67,13 @@ services:
 
     environment:
       MS_ESTUDIANTES_URI: http://ms-estudiantes:8081
-      MS_DOCENTES_URI: http://ms-docente:8082
+      MS_DOCENTE_URI: http://ms-docentes:8082
       MS_ACADEMICO_URI: http://ms-academico:8083
       MS_MATRICULAS_URI: http://ms-matriculas:8084
       MS_EVALUACION_URI: http://ms-evaluaciones:8085
       MS_ASISTENCIA_URI: http://ms-asistencia:8086
       MS_FINANZAS_URI: http://ms-finanzas:8087
-      MS_PRACTICAS_URI: http://ms-practica:8088
+      MS_PRACTICAS_URI: http://ms-practicas:8088
       MS_EMPRESAS_URI: http://ms-empresas:8089
       MS_TITULACION_URI: http://ms-titulaciones:8090
 

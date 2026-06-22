@@ -12,10 +12,10 @@ spring:
           predicates:
             - Path=/api/v1/estudiantes/**
 
-        - id: docente-route
+        - id: docentes-route
           uri: ${MS_DOCENTE_URI:http://localhost:8082}
           predicates:
-            - Path=/api/v1/docente/**
+            - Path=/api/v1/docentes/**
 
         - id: academico-route
           uri: ${MS_ACADEMICO_URI:http://localhost:8083}
@@ -62,7 +62,12 @@ spring:
           predicates:
             - Path=/api/v1/empresas/**
 
-        - id: titulacion-route
+        - id: titulaciones-route
           uri: ${MS_TITULACION_URI:http://localhost:8090}
           predicates:
             - Path=/api/v1/titulaciones/**
+
+      logging:
+        level:
+          org.springframework.cloud.gateway: DEBUG
+          reactor.netty: DEBUG
