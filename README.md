@@ -45,6 +45,7 @@ Puerto del API Gateway:
 | ----------- | ------ |
 | api-gateway | 8080   |
 
+El Gateway enruta automáticamente las solicitudes hacia el microservicio correspondiente, evitando que los clientes deban conocer los puertos individuales de cada servicio.
 ---
 
 ## Comunicación Entre Microservicios
@@ -86,7 +87,7 @@ http://localhost:8081/swagger
 
 ## Testing
 
-Se implementaron pruebas unitarias utilizando:
+Se implementaron pruebas unitarias sobre la capa de servicios utilizando JUnit 5 y Mockito. La cobertura de código fue medida mediante JaCoCo.
 
 * JUnit 5
 * Mockito
@@ -122,6 +123,13 @@ Cobertura obtenida:
 * Postman
 * Git
 * GitHub
+* Render
+
+
+## Estrategia de Branching
+
+El desarrollo del proyecto se realizó utilizando GitHub Flow. Las nuevas funcionalidades fueron desarrolladas en ramas
+feature independientes y posteriormente integradas a la rama principal mediante Pull Requests.
 
 ---
 
@@ -133,15 +141,21 @@ Ejemplo de arquitectura Docker:
 
 ```yaml
 services:
-  ms-productos:
-    build: ./ms-productos
-
-  ms-pedidos:
-    build: ./ms-pedidos
-
   api-gateway:
     build: ./api-gateway
+
+  ms-estudiantes:
+    build: ./ms-estudiantes
+
+  ms-docentes:
+    build: ./ms-docentes
+
+  ...
 ```
+
+## Despliegue
+
+Uno de los microservicios fue desplegado en Render, permitiendo validar su funcionamiento en un entorno de nube mediante una URL pública.
 
 ---
 
@@ -181,8 +195,10 @@ El proyecto está compuesto por microservicios independientes que exponen APIs R
 
 La comunicación entre servicios se realiza mediante WebClient, mientras que el API Gateway actúa como punto central de acceso. Además, la arquitectura incorpora seguridad mediante Spring Security, documentación con Swagger y pruebas unitarias con JUnit, Mockito y JaCoCo.
 
+Cada microservicio mantiene su propia base de datos, siguiendo el principio de independencia de datos propio de la arquitectura de microservicios.
+
 ---
 
 ## Estado del Proyecto
 
-✅ En Proceso — 2026
+✅ Proyecto Finalizado – 2026
